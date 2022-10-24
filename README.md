@@ -570,18 +570,55 @@ Kemudian kita akan mengecek dengan melakukan test ping `ping operation.wise.B11.
 
 
 ## Question 7
+
 > Untuk informasi yang lebih spesifik mengenai Operation Strix, buatlah subdomain melalui Berlint dengan akses strix.operation.wise.yyy.com dengan alias www.strix.operation.wise.yyy.com yang mengarah ke Eden
+
 ### Script
+
+Setelah selesai maka kita harus merestart bind9 dengan command `service bind9 restart`.
+
+> Script dibawah ini terdapat pada **root node Berlint**, untuk menjalankannya bisa langsung dengan melakukan command `bash no7.sh`
+
 - Berlint
     
     ```
+    echo -e '
+    $TTL    604800
+    @       IN      SOA     operation.wise.B11.com. root.operation.wise.B11.com. (
+                                  2         ; Serial
+                             604800         ; Refresh
+                              86400         ; Retry
+                            2419200         ; Expire
+                             604800 )       ; Negative Cache TTL
+    ;
+    @               IN      NS              operation.wise.B11.com.
+    @               IN      A               192.178.2.3                     ; IP Eden
+    www             IN      CNAME           operation.wise.B11.com.
+    strix           IN      A               192.178.2.3                     ; IP Eden
+    www.strix       IN      CNAME           strix.operation.wise.B11.com.
+    ' > /etc/bind/operation/operation.wise.B11.com
+
+    service bind9 restart
     ```
+
+Kemudian kita akan mengecek dengan melakukan test ping `ping strix.operation.wise.B11.com. -c 3` dan test cname `ping www.strix.operation.wise.B11.com. -c 1`.
+
+> Script dibawah ini terdapat pada **root node SSS & Garden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no7.sh`
 
 - SSS & Garden
     
     ```
+    echo -e "--------------------------------------------------------------------------------------"
+    echo "TEST PING SUBDOMAIN (mengarah ke host IP Eden)"
+    ping strix.operation.wise.B11.com. -c 3
+    echo -e "--------------------------------------------------------------------------------------"
+    echo "TEST ALIAS (CNAME) (alias dari  strix.operation.B11.com)"
+    ping www.strix.operation.wise.B11.com. -c 1
+    echo -e "--------------------------------------------------------------------------------------"
     ``` 
+
 ### Test
+
 ![image](https://raw.githubusercontent.com/Chroax/Jarkom-Modul-2-B11-2022/main/image/Soal7/Capture1.PNG)
 
 
