@@ -386,28 +386,89 @@ Kemudian kita akan mengecek reverse domain dengan melakukan `host -t PTR 192.178
 
 
 ## Question 5
+
 > Agar dapat tetap dihubungi jika server WISE bermasalah, buatlah juga Berlint sebagai DNS Slave untuk domain utama
+
 ### Script
+
+Setelah selesai maka kita harus merestart bind9 dengan command `service bind9 restart`.
+
+> Script dibawah ini terdapat pada **root node WISE**, untuk menjalankannya bisa langsung dengan melakukan command `bash no5.sh`
+
 - WISE
     
     ```
+    echo -e '
+    zone "wise.B11.com" {
+            type master;
+            notify yes;
+            also-notify { 192.178.2.2; }; // Masukan IP Berlint tanpa tanda petik
+            allow-transfer { 192.178.2.2; }; // Masukan IP Berlint tanpa tanda petik
+            file "/etc/bind/wise/wise.B11.com";
+    };
+
+    zone "3.178.192.in-addr.arpa" {
+        type master;
+        file "/etc/bind/wise/3.178.192.in-addr.arpa";
+    };
+
+     ' > /etc/bind/named.conf.local
+
+    service bind9 restart
     ```
+
+Setelah selesai maka kita harus merestart bind9 dengan command `service bind9 restart`.
+
+> Script dibawah ini terdapat pada **root node Berlint**, untuk menjalankannya bisa langsung dengan melakukan command `bash no5.sh`
 
 - Berlint
     
     ```
+    echo -e '
+    zone "wise.B11.com" {
+        type slave;
+        masters { 192.178.3.2; }; // Masukan IP WISE tanpa tanda petik
+        file "/var/lib/bind/wise.B11.com";
+    };
+     ' > /etc/bind/named.conf.local
+    
+    service bind9 restart
     ```
+
+Pada server WISE kita akan mematikan service bind9 dengan command `service bind9 stop`
+
+> Script dibawah ini terdapat pada **root node SSS & Garden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no5test.sh`
 
 - WISE
     
     ```
+    echo -e "--------------------------------------------------------------------------------------"
+    echo "DNS MASTER STOP"
+    service bind9 stop
+    echo -e "--------------------------------------------------------------------------------------"
     ```
+
+Kemudian pada node client (SSS & Garden), kita harus menambahkan nameserver Berlint. Kemudian setelah mematikan server WISE, kita akan mengecek dengan melakukan `ping wise.B11.com -c 3`
+
+> Script dibawah ini terdapat pada **root node SSS & Garden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no5.sh`
 
 - SSS & Garden
     
     ```
+    echo -e '
+    nameserver 192.178.3.2          ; IP WISE
+    nameserver 192.178.2.2          ; IP Berlint
+    nameserver 192.168.122.1
+    ' > /etc/resolv.conf
+
+    echo -e "--------------------------------------------------------------------------------------"
+    echo "TES SLAVE DNS, DNS MASTER DI STOP"
+    ping wise.B11.com -c 3
+    echo -e "--------------------------------------------------------------------------------------"
     ``` 
+
 ### Test
+
 ![image](https://raw.githubusercontent.com/Chroax/Jarkom-Modul-2-B11-2022/main/image/Soal5/Capture1.PNG)
 
 ![image](https://raw.githubusercontent.com/Chroax/Jarkom-Modul-2-B11-2022/main/image/Soal5/Capture2.PNG)
