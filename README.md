@@ -414,23 +414,158 @@ Kemudian kita akan mengecek reverse domain dengan melakukan `host -t PTR 192.178
 
 
 ## Question 6
+
 > Karena banyak informasi dari Handler, buatlah subdomain yang khusus untuk operation yaitu operation.wise.yyy.com dengan alias www.operation.wise.yyy.com yang didelegasikan dari WISE ke Berlint dengan IP menuju ke Eden dalam folder operation 
+
 ### Script
+
+Setelah selesai maka kita harus merestart bind9 dengan command `service bind9 restart`.
+
+> Script dibawah ini terdapat pada **root node WISE**, untuk menjalankannya bisa langsung dengan melakukan command `bash no6.sh`
+
 - WISE
     
     ```
+    echo -e '
+    ;
+    ; BIND data file for local loopback interface
+    ;
+    $TTL    604800
+    @       IN      SOA     wise.B11.com. root.wise.B11.com. (
+                                  2         ; Serial
+                             604800         ; Refresh
+                              86400         ; Retry
+                            2419200         ; Expire
+                             604800 )       ; Negative Cache TTL
+    ;
+    @                       IN      NS      wise.B11.com.
+    @                       IN      A       192.178.3.2             ; IP WISE
+    www                     IN      CNAME   wise.B11.com.
+    eden                    IN      A       192.178.2.3             ; IP Eden
+    www.eden                IN      CNAME   eden.wise.B11.com.      ; IP Eden
+    ns1                     IN      A       192.178.2.2             ; IP Berlint
+    operation               IN      NS      ns1
+    @                       IN      AAAA    ::1
+    ' > /etc/bind/wise/wise.B11.com
+
+    echo -e '
+    zone "wise.B11.com" {
+            type master;
+            notify yes;
+            also-notify { 192.178.2.2; }; // Masukan IP Berlint tanpa tanda petik
+            allow-transfer { 192.178.2.2; }; // Masukan IP Berlint tanpa tanda petik
+            file "/etc/bind/wise/wise.B11.com";
+    };
+
+    zone "3.178.192.in-addr.arpa" {
+        type master;
+        file "/etc/bind/wise/3.178.192.in-addr.arpa";
+    };
+    ' > /etc/bind/named.conf.local
+
+    echo -e '
+    options {
+            directory "/var/cache/bind";
+
+            // If there is a firewall between you and nameservers you want
+            // to talk to, you may need to fix the firewall to allow multiple
+            // ports to talk.  See http://www.kb.cert.org/vuls/id/800113
+               forwarders {
+                    192.168.122.1;
+               };
+
+            //========================================================================
+            // If BIND logs error messages about the root key being expired,
+            // you will need to update your keys.  See https://www.isc.org/bind-keys
+            //========================================================================
+            //dnssec-validation auto;
+            allow-query{any;};
+            auth-nxdomain no;    # conform to RFC1035
+            listen-on-v6 { any; };
+    };
+    ' > /etc/bind/named.conf.options
+
+    service bind9 restart    
     ```
+
+Setelah selesai maka kita harus merestart bind9 dengan command `service bind9 restart`.
+
+> Script dibawah ini terdapat pada **root node Berlint**, untuk menjalankannya bisa langsung dengan melakukan command `bash no6.sh`
 
 - Berlint
     
     ```
+    echo -e '
+    options {
+            directory "/var/cache/bind";
+
+            // If there is a firewall between you and nameservers you want
+            // to talk to, you may need to fix the firewall to allow multiple
+            // ports to talk.  See http://www.kb.cert.org/vuls/id/800113
+            // forwarders {
+            //      0.0.0.0;
+            // };
+
+            //========================================================================
+            // If BIND logs error messages about the root key being expired,
+            // you will need to update your keys.  See https://www.isc.org/bind-keys
+            //========================================================================
+            //dnssec-validation auto;
+            allow-query{any;};
+            auth-nxdomain no;    # conform to RFC1035
+            listen-on-v6 { any; };
+    };
+    ' > /etc/bind/named.conf.options
+
+    echo -e '
+    zone "wise.B11.com" {
+        type slave;
+        masters { 192.178.3.2; }; // Masukan IP WISE tanpa tanda petik
+        file "/var/lib/bind/wise.B11.com";
+    };
+    zone "operation.wise.B11.com" {
+            type master;
+            file "/etc/bind/operation/operation.wise.B11.com";
+    };
+    ' > /etc/bind/named.conf.local
+
+    mkdir /etc/bind/operation
+
+    echo -e '
+    $TTL    604800
+    @       IN      SOA     operation.wise.B11.com. root.operation.wise.B11.com. (
+                                  2         ; Serial
+                             604800         ; Refresh
+                              86400         ; Retry
+                            2419200         ; Expire
+                             604800 )       ; Negative Cache TTL
+    ;
+    @               IN      NS          operation.wise.B11.com.
+    @               IN      A           192.178.2.3                 ; IP Eden
+    www             IN      CNAME       operation.wise.B11.com.
+    ' > /etc/bind/operation/operation.wise.B11.com
+
+    service bind9 restart
     ```
+
+Kemudian kita akan mengecek dengan melakukan test ping `ping operation.wise.B11.com -c 3` dan test cname `host -t CNAME www.operation.wise.B11.com`.
+
+> Script dibawah ini terdapat pada **root node SSS & Garden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no6.sh`
 
 - SSS & Garden
     
     ```
+    echo "----------------------------------------------------------------"
+    echo "TEST PING DELEGASI SUBDOMAIN (mengarah ke host IP Eden)"
+    ping operation.wise.B11.com -c 3
+    echo "----------------------------------------------------------------"
+    echo "TEST ALIAS (CNAME) (alias dari operation.wise.B11.com)"
+    host -t CNAME www.operation.wise.B11.com
+    echo "----------------------------------------------------------------"
     ``` 
+
 ### Test
+
 ![image](https://raw.githubusercontent.com/Chroax/Jarkom-Modul-2-B11-2022/main/image/Soal6/Capture1.PNG)
 
 
