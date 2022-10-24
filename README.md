@@ -206,7 +206,7 @@ Setelah berhasil melakukan konfigurasi dan selesai menjalankan start command, ki
 
 ### Script
 
-Pertama-tama pada node WISE (Master), kita harus konfigurasikan `/etc/bind/named.conf.local` dengan domain wise.B11.com. Setelah itu buatlah direktori `/etc/bind/wise`. Kemudian buatlah file `wise.B11.com` pada direktori yang baru saja dibuat dan isilah file sesuai dengan contoh dibawah ini (setelah command `mkdir /etc/bind/wise`).
+Pertama-tama pada node WISE (Master), kita harus konfigurasikan `/etc/bind/named.conf.local` dengan domain wise.B11.com. Setelah itu buatlah direktori `/etc/bind/wise`. Kemudian buatlah file `wise.B11.com` pada direktori yang baru saja dibuat dan isilah file sesuai dengan contoh dibawah ini (setelah command `mkdir /etc/bind/wise`). Setelah selesai maka kita harus merestart bind9 dengan command `service bind9 restart`.
 
 > Script dibawah ini terdapat pada **root node WISE**, untuk menjalankannya bisa langsung dengan melakukan command `bash no2.sh`
 
@@ -269,34 +269,119 @@ Kemudian pada node client (SSS & Garden), kita harus lakukan setting nameserver 
 
 
 ## Question 3
+
 > Setelah itu ia juga ingin membuat subdomain eden.wise.yyy.com dengan alias www.eden.wise.yyy.com yang diatur DNS-nya di WISE dan mengarah ke Eden
+
 ### Script
+
+Setelah selesai maka kita harus merestart bind9 dengan command `service bind9 restart`.
+
+> Script dibawah ini terdapat pada **root node WISE**, untuk menjalankannya bisa langsung dengan melakukan command `bash no3.sh`
+
 - WISE
     
     ```
+    echo -e '
+    ;
+    ; BIND data file for local loopback interface
+    ;
+    $TTL    604800
+    @       IN      SOA     wise.B11.com. root.wise.B11.com. (
+                                  2         ; Serial
+                             604800         ; Refresh
+                              86400         ; Retry
+                            2419200         ; Expire
+                             604800 )       ; Negative Cache TTL
+    ;
+    @               IN      NS      wise.B11.com.
+    @               IN      A       192.178.3.2             ; IP WISE
+    www             IN      CNAME   wise.B11.com.
+    eden            IN      A       192.178.2.3             ; IP Eden
+    www.eden        IN      CNAME   eden.wise.B11.com.
+    @               IN      AAAA    ::1
+    ' > /etc/bind/wise/wise.B11.com
+
+    service bind9 restart
     ```
+
+Kemudian kita akan mengecek dengan melakukan test ping `ping eden.wise.B11.com -c 3` dan test cname `host -t CNAME www.eden.wise.B11.com`.
+
+> Script dibawah ini terdapat pada **root node SSS & Garden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no3.sh`
 
 - SSS & Garden
     
     ```
+    echo -e "--------------------------------------------------------------------------------------"
+    echo "TEST PING SUBDOMAIN (mengarah ke host IP Eden)"
+    ping eden.wise.B11.com -c 3
+    echo -e "--------------------------------------------------------------------------------------"
+    echo "TEST ALIAS (CNAME) (alias dari  eden.wise.B11.com)"
+    host -t CNAME www.eden.wise.B11.com
+    echo -e "--------------------------------------------------------------------------------------"
     ``` 
+
 ### Test
+
 ![image](https://raw.githubusercontent.com/Chroax/Jarkom-Modul-2-B11-2022/main/image/Soal3/Capture1.PNG)
 
 
 ## Question 4
+
 > Buat juga reverse domain untuk domain utama
+
 ### Script
+
+Setelah selesai maka kita harus merestart bind9 dengan command `service bind9 restart`.
+
+> Script dibawah ini terdapat pada **root node WISE**, untuk menjalankannya bisa langsung dengan melakukan command `bash no4.sh`
+
 - WISE
     
     ```
+    echo -e '
+    zone "wise.B11.com" {
+            type master;
+            file "/etc/bind/wise/wise.B11.com";
+    };
+
+    zone "3.178.192.in-addr.arpa" {
+        type master;
+        file "/etc/bind/wise/3.178.192.in-addr.arpa";
+    };
+
+     ' > /etc/bind/named.conf.local
+
+    echo -e '
+    $TTL    604800
+    @       IN      SOA     wise.B11.com. root.wise.B11.com. (
+                                  2         ; Serial
+                             604800         ; Refresh
+                              86400         ; Retry
+                            2419200         ; Expire
+                             604800 )       ; Negative Cache TTL
+    ;
+    3.178.192.in-addr.arpa.    IN     NS      wise.B11.com.
+    2                          IN     PTR     wise.B11.com.
+    ' > /etc/bind/wise/3.178.192.in-addr.arpa
+
+    service bind9 restart
     ```
+
+Kemudian kita akan mengecek reverse domain dengan melakukan `host -t PTR 192.178.3.2`.
+
+> Script dibawah ini terdapat pada **root node SSS & Garden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no4.sh`
 
 - SSS & Garden
     
     ```
+    echo -e "--------------------------------------------------------------------------------------"
+    echo "TES REVERSE DOMAIN (point to wise.b11.com.)"
+    host -t PTR 192.178.3.2
+    echo -e "--------------------------------------------------------------------------------------"
     ``` 
+
 ### Test
+
 ![image](https://raw.githubusercontent.com/Chroax/Jarkom-Modul-2-B11-2022/main/image/Soal4/Capture1.PNG)
 
 
