@@ -28,13 +28,13 @@
 16. [Soal 16](#Question-16)
 17. [Soal 17](#Question-17)
 
-
 ## Topografi
+
 ![image](https://raw.githubusercontent.com/Chroax/Jarkom-Modul-2-B11-2022/main/image/topografi.PNG)
 
-
 ## Konfigurasi
-- Ostania
+
+- **Ostania**
     
     ```
     auto eth0
@@ -56,7 +56,7 @@
     	netmask 255.255.255.0
     ```
 
-- SSS
+- **SSS**
     
     ```
     auto eth0
@@ -66,7 +66,7 @@
     	gateway 192.178.1.1
     ```
 
-- Garden
+- **Garden**
     
     ```
     auto eth0
@@ -76,7 +76,7 @@
     	gateway 192.178.1.1
     ```
 
-- WISE
+- **WISE**
     
     ```
     auto eth0
@@ -86,7 +86,7 @@
     	gateway 192.178.3.1
     ```
 
-- Berlint
+- **Berlint**
     
     ```
     auto eth0
@@ -96,7 +96,7 @@
     	gateway 192.178.2.1
     ```
 
-- Eden
+- **Eden**
     
     ```
     auto eth0
@@ -106,10 +106,11 @@
     	gateway 192.178.2.1
     ```
 
-    
 ## Initial Script
+
 Pada initial project, kami mengubah `root/.bashrc` masing-masing node sehingga saat dijalankan akan langsung melakukan command berikut ini
-- Ostania
+
+- **Ostania**
     
     ```
     # ~/.bashrc: executed by bash(1) for non-login shells.
@@ -121,7 +122,7 @@ Pada initial project, kami mengubah `root/.bashrc` masing-masing node sehingga s
     iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE -s 192.178.0.0/16
     ```
 
-- Eden
+- **Eden**
     
     ```
     # ~/.bashrc: executed by bash(1) for non-login shells.
@@ -152,7 +153,7 @@ Pada initial project, kami mengubah `root/.bashrc` masing-masing node sehingga s
     cd ~
     ```
 
-- Lainnya
+- **Lainnya**
     
     ```
     # ~/.bashrc: executed by bash(1) for non-login shells.
@@ -173,18 +174,25 @@ Pada initial project, kami mengubah `root/.bashrc` masing-masing node sehingga s
     ```
 
 ## Question 1
+
 > WISE akan dijadikan sebagai DNS Master, Berlint akan dijadikan DNS Slave, dan Eden akan digunakan sebagai Web Server. Terdapat 2 Client yaitu SSS, dan Garden. Semua node terhubung pada router Ostania, sehingga dapat mengakses internet
+
 ### Script
-Setelah berhasil melakukan konfigurasi dan selesai menjalankan start command, kita akan melakukan pengecekan internet untuk semua node dengan melakukan ping terhadap `google.com`
-- Semua Node
-    
+
+Setelah berhasil melakukan konfigurasi dan selesai menjalankan start command, kita akan melakukan pengecekan internet untuk semua node dengan melakukan ping terhadap `google.com`.
+
+> Script dibawah ini terdapat pada **root semua node**, untuk menjalankannya bisa langsung dengan melakukan command `bash no1.sh`
+
+- **Semua Node** 
     ```
     echo -e "--------------------------------------------------------------------------------------"
     echo " TES AKSES INTERNET:"
     ping google.com -c 3
     echo -e "--------------------------------------------------------------------------------------"
     ```
+
 ### Test
+
 ![image](https://raw.githubusercontent.com/Chroax/Jarkom-Modul-2-B11-2022/main/image/Soal1/Capture1.PNG)
 
 ![image](https://raw.githubusercontent.com/Chroax/Jarkom-Modul-2-B11-2022/main/image/Soal1/Capture2.PNG)
@@ -193,18 +201,70 @@ Setelah berhasil melakukan konfigurasi dan selesai menjalankan start command, ki
 
 
 ## Question 2
+
 > Untuk mempermudah mendapatkan informasi mengenai misi dari Handler, bantulah Loid membuat website utama dengan akses wise.yyy.com dengan alias www.wise.yyy.com pada folder wise
+
 ### Script
+
+Pertama-tama pada node WISE (Master), kita harus konfigurasikan `/etc/bind/named.conf.local` dengan domain wise.B11.com. Setelah itu buatlah direktori `/etc/bind/wise`. Kemudian buatlah file `wise.B11.com` pada direktori yang baru saja dibuat dan isilah file sesuai dengan contoh dibawah ini (setelah command `mkdir /etc/bind/wise`).
+
+> Script dibawah ini terdapat pada **root node WISE**, untuk menjalankannya bisa langsung dengan melakukan command `bash no2.sh`
+
 - WISE
-    
     ```
+    echo -e '
+    zone "wise.B11.com" {
+            type master;
+            file "/etc/bind/wise/wise.B11.com";
+    };
+     ' > /etc/bind/named.conf.local
+
+    mkdir /etc/bind/wise
+
+    echo -e '
+    ;
+    ; BIND data file for local loopback interface
+    ;
+    $TTL    604800
+    @       IN      SOA     wise.B11.com. root.wise.B11.com. (
+                                  2         ; Serial
+                             604800         ; Refresh
+                              86400         ; Retry
+                            2419200         ; Expire
+                             604800 )       ; Negative Cache TTL
+    ;
+    @       IN      NS      wise.B11.com.
+    @       IN      A       192.178.3.2     ; IP WISE
+    www     IN      CNAME   wise.B11.com.
+    @       IN      AAAA    ::1
+    ' > /etc/bind/wise/wise.B11.com
+
+    service bind9 restart
     ```
+
+Kemudian pada node client (SSS & Garden), kita harus lakukan setting nameserver yang ada. Kemudian kita akan mengecek dengan melakukan `host -t CNAME www.wise.B11.com` dan `www.wise.B11.com -c 3`.
+
+> Script dibawah ini terdapat pada **root node SSS & Garden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no2.sh`
 
 - SSS & Garden
     
     ```
-    ```    
+    echo -e '
+    nameserver 192.178.3.2          ; IP WISE
+    nameserver 192.168.122.1
+    ' > /etc/resolv.conf
+
+    echo -e "--------------------------------------------------------------------------------------"
+    host -t CNAME www.wise.B11.com
+    echo "TEST ALIAS (CNAME) (alias dari wise.B11.com)"
+    echo -e "--------------------------------------------------------------------------------------"
+    echo "TEST ARAH PING www.wise.B11.com (mengarah ke host IP WISE)"
+    ping www.wise.B11.com -c 3
+    echo -e "--------------------------------------------------------------------------------------"
+    ```
+
 ### Test
+
 ![image](https://raw.githubusercontent.com/Chroax/Jarkom-Modul-2-B11-2022/main/image/Soal2/Capture1.PNG)
 
 
