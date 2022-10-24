@@ -175,9 +175,14 @@ Pada initial project, kami mengubah `root/.bashrc` masing-masing node sehingga s
 ## Question 1
 > WISE akan dijadikan sebagai DNS Master, Berlint akan dijadikan DNS Slave, dan Eden akan digunakan sebagai Web Server. Terdapat 2 Client yaitu SSS, dan Garden. Semua node terhubung pada router Ostania, sehingga dapat mengakses internet
 ### Script
+Setelah berhasil melakukan konfigurasi dan selesai menjalankan start command, kita akan melakukan pengecekan internet untuk semua node dengan melakukan ping terhadap `google.com`
 - Semua Node
     
     ```
+    echo -e "--------------------------------------------------------------------------------------"
+    echo " TES AKSES INTERNET:"
+    ping google.com -c 3
+    echo -e "--------------------------------------------------------------------------------------"
     ```
 ### Test
 ![image](https://raw.githubusercontent.com/Chroax/Jarkom-Modul-2-B11-2022/main/image/Soal1/Capture1.PNG)
