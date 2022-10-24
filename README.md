@@ -28,23 +28,149 @@
 16. [Soal 16](#Question-16)
 17. [Soal 17](#Question-17)
 
-## Initial Script
-Pada initial project, kami mengubah `root/.bashrc` masing-masing node sehingga saat dijalankan akan langsung melakukan command berikut ini
+
+## Topografi
+![image](https://raw.githubusercontent.com/Chroax/Jarkom-Modul-2-B11-2022/main/image/topografi.PNG)
+
+
+## Konfigurasi
 - Ostania
     
     ```
+    auto eth0
+    iface eth0 inet dhcp
+
+    auto eth1
+    iface eth1 inet static
+    	address 192.178.1.1
+    	netmask 255.255.255.0
+
+    auto eth2
+    iface eth2 inet static
+    	address 192.178.2.1
+    	netmask 255.255.255.0
+
+    auto eth3
+    iface eth3 inet static
+    	address 192.178.3.1
+    	netmask 255.255.255.0
+    ```
+
+- SSS
+    
+    ```
+    auto eth0
+    iface eth0 inet static
+    	address 192.178.1.2
+    	netmask 255.255.255.0
+    	gateway 192.178.1.1
+    ```
+
+- Garden
+    
+    ```
+    auto eth0
+    iface eth0 inet static
+    	address 192.178.1.3
+    	netmask 255.255.255.0
+    	gateway 192.178.1.1
+    ```
+
+- WISE
+    
+    ```
+    auto eth0
+    iface eth0 inet static
+    	address 192.178.3.2
+    	netmask 255.255.255.0
+    	gateway 192.178.3.1
+    ```
+
+- Berlint
+    
+    ```
+    auto eth0
+    iface eth0 inet static
+    	address 192.178.2.2
+    	netmask 255.255.255.0
+    	gateway 192.178.2.1
     ```
 
 - Eden
     
     ```
+    auto eth0
+    iface eth0 inet static
+    	address 192.178.2.3
+    	netmask 255.255.255.0
+    	gateway 192.178.2.1
+    ```
+
+    
+## Initial Script
+Pada initial project, kami mengubah `root/.bashrc` masing-masing node sehingga saat dijalankan akan langsung melakukan command berikut ini
+- Ostania
+    
+    ```
+    # ~/.bashrc: executed by bash(1) for non-login shells.
+    # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
+    # for examples
+    ...
+    apt-get update
+    apt-get install nano
+    iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE -s 192.178.0.0/16
+    ```
+
+- Eden
+    
+    ```
+    # ~/.bashrc: executed by bash(1) for non-login shells.
+    # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
+    # for examples
+    ...
+    echo 'nameserver 192.168.122.1' > /etc/resolv.conf
+    apt-get update
+    apt-get install nano
+    apt-get install dnsutils
+    apt-get install bind9 -y
+    apt-get install lynx
+    apt-get install apache2
+    apt-get install libapache2-mod-php7.0
+    service apache2 start
+    apt-get install wget -y
+    apt-get install unzip -y
+    apt-get install php
+    echo -e "\n\nPHP Version:"
+    php -v
+    cd /var/www
+    wget 'https://github.com/Chroax/Jarkom-Modul-2-B11-2022/raw/main/resources/wise.zip'
+    unzip wise.zip
+    wget 'https://github.com/Chroax/Jarkom-Modul-2-B11-2022/raw/main/resources/strix.operation.wise.zip'
+    unzip strix.operation.wise.zip
+    wget 'https://github.com/Chroax/Jarkom-Modul-2-B11-2022/raw/main/resources/eden.wise.zip'
+    unzip eden.wise.zip
+    cd ~
     ```
 
 - Lainnya
     
     ```
+    # ~/.bashrc: executed by bash(1) for non-login shells.
+    # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
+    # for examples
+    ...
+    echo 'nameserver 192.168.122.1' > /etc/resolv.conf
+    apt-get update
+    apt-get install nano
+    apt-get install dnsutils
+    apt-get install bind9 -y
+    apt-get install lynx
+    apt-get install apache2
+    service apache2 start
+    apt-get install php
+    echo -e "\n\nPHP Version:"
+    php -v
     ```
-
 
 ## Question 1
 > WISE akan dijadikan sebagai DNS Master, Berlint akan dijadikan DNS Slave, dan Eden akan digunakan sebagai Web Server. Terdapat 2 Client yaitu SSS, dan Garden. Semua node terhubung pada router Ostania, sehingga dapat mengakses internet
@@ -54,11 +180,11 @@ Pada initial project, kami mengubah `root/.bashrc` masing-masing node sehingga s
     ```
     ```
 ### Test
-![image]()
+![image](https://raw.githubusercontent.com/Chroax/Jarkom-Modul-2-B11-2022/main/image/Soal1/Capture1.PNG)
 
-![image]()
+![image](https://raw.githubusercontent.com/Chroax/Jarkom-Modul-2-B11-2022/main/image/Soal1/Capture2.PNG)
 
-![image]()
+![image](https://raw.githubusercontent.com/Chroax/Jarkom-Modul-2-B11-2022/main/image/Soal1/Capture3.PNG)
 
 
 ## Question 2
@@ -74,7 +200,7 @@ Pada initial project, kami mengubah `root/.bashrc` masing-masing node sehingga s
     ```
     ```    
 ### Test
-![image]()
+![image](https://raw.githubusercontent.com/Chroax/Jarkom-Modul-2-B11-2022/main/image/Soal2/Capture1.PNG)
 
 
 ## Question 3
@@ -90,7 +216,7 @@ Pada initial project, kami mengubah `root/.bashrc` masing-masing node sehingga s
     ```
     ``` 
 ### Test
-![image]()
+![image](https://raw.githubusercontent.com/Chroax/Jarkom-Modul-2-B11-2022/main/image/Soal3/Capture1.PNG)
 
 
 ## Question 4
@@ -106,7 +232,7 @@ Pada initial project, kami mengubah `root/.bashrc` masing-masing node sehingga s
     ```
     ``` 
 ### Test
-![image]()
+![image](https://raw.githubusercontent.com/Chroax/Jarkom-Modul-2-B11-2022/main/image/Soal4/Capture1.PNG)
 
 
 ## Question 5
@@ -132,9 +258,9 @@ Pada initial project, kami mengubah `root/.bashrc` masing-masing node sehingga s
     ```
     ``` 
 ### Test
-![image]()
+![image](https://raw.githubusercontent.com/Chroax/Jarkom-Modul-2-B11-2022/main/image/Soal5/Capture1.PNG)
 
-![image]()
+![image](https://raw.githubusercontent.com/Chroax/Jarkom-Modul-2-B11-2022/main/image/Soal5/Capture2.PNG)
 
 
 ## Question 6
@@ -155,7 +281,7 @@ Pada initial project, kami mengubah `root/.bashrc` masing-masing node sehingga s
     ```
     ``` 
 ### Test
-![image]()
+![image](https://raw.githubusercontent.com/Chroax/Jarkom-Modul-2-B11-2022/main/image/Soal6/Capture1.PNG)
 
 
 ## Question 7
@@ -171,7 +297,7 @@ Pada initial project, kami mengubah `root/.bashrc` masing-masing node sehingga s
     ```
     ``` 
 ### Test
-![image]()
+![image](https://raw.githubusercontent.com/Chroax/Jarkom-Modul-2-B11-2022/main/image/Soal7/Capture1.PNG)
 
 
 ## Question 8
@@ -192,7 +318,7 @@ Pada initial project, kami mengubah `root/.bashrc` masing-masing node sehingga s
     ```
     ``` 
 ### Test
-![image]()
+![image](https://raw.githubusercontent.com/Chroax/Jarkom-Modul-2-B11-2022/main/image/Soal8/Capture1.PNG)
 
 
 ## Question 9
@@ -208,7 +334,7 @@ Pada initial project, kami mengubah `root/.bashrc` masing-masing node sehingga s
     ```
     ``` 
 ### Test
-![image]()
+![image](https://raw.githubusercontent.com/Chroax/Jarkom-Modul-2-B11-2022/main/image/Soal9/Capture1.PNG)
 
 
 ## Question 10
