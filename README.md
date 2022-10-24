@@ -274,7 +274,7 @@ Kemudian pada node client (SSS & Garden), kita harus lakukan setting nameserver 
 
 ### Script
 
-Setelah selesai maka kita harus merestart bind9 dengan command `service bind9 restart`.
+Untuk membuat subdomain kita harus menambahkan `eden            IN      A       192.178.2.3             ; IP Eden` pada file `/etc/bind/wise/wise.B11.com`. Kemudian tambahkan juga `www.eden        IN      CNAME   eden.wise.B11.com.` pada file yang sama. Setelah selesai maka kita harus merestart bind9 dengan command `service bind9 restart`.
 
 > Script dibawah ini terdapat pada **root node WISE**, untuk menjalankannya bisa langsung dengan melakukan command `bash no3.sh`
 
@@ -331,7 +331,7 @@ Kemudian kita akan mengecek dengan melakukan test ping `ping eden.wise.B11.com -
 
 ### Script
 
-Setelah selesai maka kita harus merestart bind9 dengan command `service bind9 restart`.
+Untuk membuat reverse domain kita memerlukan tambahan Zone Baru, tambahkan zone tersebut pada file `/etc/bind/named.conf.local` sesuai dengan ip kita.  Kemudian buatlah sebuah file pada direktori `/etc/bind/wise/` dengan nama file `"3 byte reverse ip kita".in-addr.arpa`. Setelah selesai maka kita harus merestart bind9 dengan command `service bind9 restart`.
 
 > Script dibawah ini terdapat pada **root node WISE**, untuk menjalankannya bisa langsung dengan melakukan command `bash no4.sh`
 
