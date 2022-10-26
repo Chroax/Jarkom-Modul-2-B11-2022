@@ -684,8 +684,11 @@ Kemudian kita akan mengecek dengan melakukan test ping `ping strix.operation.wis
 
 
 ## Question 8
+
 > Setelah melakukan konfigurasi server, maka dilakukan konfigurasi Webserver. Pertama dengan webserver www.wise.yyy.com. Pertama, Loid membutuhkan webserver dengan DocumentRoot pada /var/www/wise.yyy.com
+
 ### Script
+
 - WISE
     
     ```
@@ -700,13 +703,17 @@ Kemudian kita akan mengecek dengan melakukan test ping `ping strix.operation.wis
     
     ```
     ``` 
+
 ### Test
+
 ![image](https://raw.githubusercontent.com/Chroax/Jarkom-Modul-2-B11-2022/main/image/Soal8/Capture1.PNG)
 
 
 ## Question 9
 > Setelah itu, Loid juga membutuhkan agar url www.wise.yyy.com/index.php/home dapat menjadi menjadi www.wise.yyy.com/home
+
 ### Script
+
 - Eden
     
     ```
@@ -716,7 +723,9 @@ Kemudian kita akan mengecek dengan melakukan test ping `ping strix.operation.wis
     
     ```
     ``` 
+
 ### Test
+
 ![image](https://raw.githubusercontent.com/Chroax/Jarkom-Modul-2-B11-2022/main/image/Soal9/Capture1.PNG)
 
 
