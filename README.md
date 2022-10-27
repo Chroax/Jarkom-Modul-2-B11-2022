@@ -117,12 +117,10 @@ Pada initial project, kami mengubah `root/.bashrc` masing-masing node sehingga s
     # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
     # for examples
     ...
-    apt-get update
-    apt-get install nano
     iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE -s 192.178.0.0/16
     ```
 
-- **Eden**
+- **Master & Slave**
     
     ```
     # ~/.bashrc: executed by bash(1) for non-login shells.
@@ -130,47 +128,63 @@ Pada initial project, kami mengubah `root/.bashrc` masing-masing node sehingga s
     # for examples
     ...
     echo 'nameserver 192.168.122.1' > /etc/resolv.conf
+
     apt-get update
-    apt-get install nano
-    apt-get install dnsutils
     apt-get install bind9 -y
+    ```
+
+- **Client**
+
+    ```
+    # ~/.bashrc: executed by bash(1) for non-login shells.
+    # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
+    # for examples
+    ...
+    echo -e '
+    nameserver 192.178.3.2
+    nameserver 192.178.2.2
+    nameserver 192.168.122.1
+    ' > /etc/resolv.conf
+
+    apt-get update
+    apt-get install dnsutils
     apt-get install lynx
+    ```
+
+- **Web Server**
+    
+    ```
+    # ~/.bashrc: executed by bash(1) for non-login shells.
+    # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
+    # for examples
+    ...
+    echo 'nameserver 192.168.122.1' > /etc/resolv.conf
+
+    apt-get update
     apt-get install apache2
     apt-get install libapache2-mod-php7.0
     service apache2 start
+
     apt-get install wget -y
     apt-get install unzip -y
     apt-get install php
+
     echo -e "\n\nPHP Version:"
     php -v
+
     cd /var/www
+
     wget 'https://github.com/Chroax/Jarkom-Modul-2-B11-2022/raw/main/resources/wise.zip'
     unzip wise.zip
+    rm wise.zip
+
     wget 'https://github.com/Chroax/Jarkom-Modul-2-B11-2022/raw/main/resources/strix.operation.wise.zip'
     unzip strix.operation.wise.zip
+    rm strix.operation.wise.zip
+
     wget 'https://github.com/Chroax/Jarkom-Modul-2-B11-2022/raw/main/resources/eden.wise.zip'
     unzip eden.wise.zip
-    cd ~
-    ```
-
-- **Lainnya**
-    
-    ```
-    # ~/.bashrc: executed by bash(1) for non-login shells.
-    # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
-    # for examples
-    ...
-    echo 'nameserver 192.168.122.1' > /etc/resolv.conf
-    apt-get update
-    apt-get install nano
-    apt-get install dnsutils
-    apt-get install bind9 -y
-    apt-get install lynx
-    apt-get install apache2
-    service apache2 start
-    apt-get install php
-    echo -e "\n\nPHP Version:"
-    php -v
+    rm eden.wise.zip
     ```
 
 ## Question 1
@@ -210,12 +224,12 @@ Pertama-tama pada node WISE (Master), kita harus konfigurasikan `/etc/bind/named
 
 > Script dibawah ini terdapat pada **root node WISE**, untuk menjalankannya bisa langsung dengan melakukan command `bash no2.sh`
 
-- WISE
+- **WISE**
     ```
     echo -e '
-    zone "wise.B11.com" {
+    zone "wise.b11.com" {
             type master;
-            file "/etc/bind/wise/wise.B11.com";
+            file "/etc/bind/wise/wise.b11.com";
     };
      ' > /etc/bind/named.conf.local
 
@@ -226,18 +240,17 @@ Pertama-tama pada node WISE (Master), kita harus konfigurasikan `/etc/bind/named
     ; BIND data file for local loopback interface
     ;
     $TTL    604800
-    @       IN      SOA     wise.B11.com. root.wise.B11.com. (
+    @       IN      SOA     wise.b11.com. root.wise.b11.com. (
                                   2         ; Serial
                              604800         ; Refresh
                               86400         ; Retry
                             2419200         ; Expire
                              604800 )       ; Negative Cache TTL
     ;
-    @       IN      NS      wise.B11.com.
-    @       IN      A       192.178.3.2     ; IP WISE
-    www     IN      CNAME   wise.B11.com.
-    @       IN      AAAA    ::1
-    ' > /etc/bind/wise/wise.B11.com
+    @       IN      NS      wise.b11.com.
+    @       IN      A       192.178.3.2	; IP WISE
+    www	IN	CNAME	wise.b11.com.
+    ' > /etc/bind/wise/wise.b11.com
 
     service bind9 restart
     ```
@@ -246,17 +259,12 @@ Kemudian pada node client (SSS & Garden), kita harus lakukan setting nameserver 
 
 > Script dibawah ini terdapat pada **root node SSS & Garden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no2.sh`
 
-- SSS & Garden
+- **SSS & Garden**
     
     ```
-    echo -e '
-    nameserver 192.178.3.2          ; IP WISE
-    nameserver 192.168.122.1
-    ' > /etc/resolv.conf
-
     echo -e "--------------------------------------------------------------------------------------"
-    host -t CNAME www.wise.B11.com
     echo "TEST ALIAS (CNAME) (alias dari wise.B11.com)"
+    host -t CNAME www.wise.B11.com
     echo -e "--------------------------------------------------------------------------------------"
     echo "TEST ARAH PING www.wise.B11.com (mengarah ke host IP WISE)"
     ping www.wise.B11.com -c 3
@@ -278,7 +286,7 @@ Untuk membuat subdomain kita harus menambahkan `eden            IN      A       
 
 > Script dibawah ini terdapat pada **root node WISE**, untuk menjalankannya bisa langsung dengan melakukan command `bash no3.sh`
 
-- WISE
+- **WISE**
     
     ```
     echo -e '
@@ -286,20 +294,19 @@ Untuk membuat subdomain kita harus menambahkan `eden            IN      A       
     ; BIND data file for local loopback interface
     ;
     $TTL    604800
-    @       IN      SOA     wise.B11.com. root.wise.B11.com. (
+    @       IN      SOA     wise.b11.com. root.wise.b11.com. (
                                   2         ; Serial
                              604800         ; Refresh
                               86400         ; Retry
                             2419200         ; Expire
                              604800 )       ; Negative Cache TTL
     ;
-    @               IN      NS      wise.B11.com.
-    @               IN      A       192.178.3.2             ; IP WISE
-    www             IN      CNAME   wise.B11.com.
-    eden            IN      A       192.178.2.3             ; IP Eden
-    www.eden        IN      CNAME   eden.wise.B11.com.
-    @               IN      AAAA    ::1
-    ' > /etc/bind/wise/wise.B11.com
+    @       	IN      NS      wise.b11.com.
+    @       	IN      A       192.178.3.2     	; IP WISE
+    www     	IN      CNAME   wise.b11.com.
+    eden		IN	A	192.178.2.3		; IP Eden
+    www.eden	IN	CNAME	eden.wise.b11.com.
+    ' > /etc/bind/wise/wise.b11.com
 
     service bind9 restart
     ```
@@ -308,7 +315,7 @@ Kemudian kita akan mengecek dengan melakukan test ping `ping eden.wise.B11.com -
 
 > Script dibawah ini terdapat pada **root node SSS & Garden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no3.sh`
 
-- SSS & Garden
+- **SSS & Garden**
     
     ```
     echo -e "--------------------------------------------------------------------------------------"
@@ -335,13 +342,13 @@ Untuk membuat reverse domain kita memerlukan tambahan Zone Baru, tambahkan zone 
 
 > Script dibawah ini terdapat pada **root node WISE**, untuk menjalankannya bisa langsung dengan melakukan command `bash no4.sh`
 
-- WISE
+- **WISE**
     
     ```
     echo -e '
-    zone "wise.B11.com" {
+    zone "wise.b11.com" {
             type master;
-            file "/etc/bind/wise/wise.B11.com";
+            file "/etc/bind/wise/wise.b11.com";
     };
 
     zone "3.178.192.in-addr.arpa" {
@@ -353,15 +360,15 @@ Untuk membuat reverse domain kita memerlukan tambahan Zone Baru, tambahkan zone 
 
     echo -e '
     $TTL    604800
-    @       IN      SOA     wise.B11.com. root.wise.B11.com. (
+    @       IN      SOA     wise.b11.com. root.wise.b11.com. (
                                   2         ; Serial
                              604800         ; Refresh
                               86400         ; Retry
                             2419200         ; Expire
                              604800 )       ; Negative Cache TTL
     ;
-    3.178.192.in-addr.arpa.    IN     NS      wise.B11.com.
-    2                          IN     PTR     wise.B11.com.
+    3.178.192.in-addr.arpa.    IN     NS      wise.b11.com.
+    2                      	   IN     PTR     wise.b11.com.
     ' > /etc/bind/wise/3.178.192.in-addr.arpa
 
     service bind9 restart
@@ -371,7 +378,7 @@ Kemudian kita akan mengecek reverse domain dengan melakukan `host -t PTR 192.178
 
 > Script dibawah ini terdapat pada **root node SSS & Garden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no4.sh`
 
-- SSS & Garden
+- **SSS & Garden**
     
     ```
     echo -e "--------------------------------------------------------------------------------------"
@@ -395,16 +402,16 @@ Setelah selesai maka kita harus merestart bind9 dengan command `service bind9 re
 
 > Script dibawah ini terdapat pada **root node WISE**, untuk menjalankannya bisa langsung dengan melakukan command `bash no5.sh`
 
-- WISE
+- **WISE**
     
     ```
     echo -e '
-    zone "wise.B11.com" {
+    zone "wise.b11.com" {
             type master;
-            notify yes;
-            also-notify { 192.178.2.2; }; // Masukan IP Berlint tanpa tanda petik
-            allow-transfer { 192.178.2.2; }; // Masukan IP Berlint tanpa tanda petik
-            file "/etc/bind/wise/wise.B11.com";
+    	notify yes;
+    	also-notify { 192.178.2.2; }; // Masukan IP Berlint tanpa tanda petik
+    	allow-transfer { 192.178.2.2; }; // Masukan IP Berlint tanpa tanda petik
+    	file "/etc/bind/wise/wise.b11.com";
     };
 
     zone "3.178.192.in-addr.arpa" {
@@ -421,17 +428,17 @@ Setelah selesai maka kita harus merestart bind9 dengan command `service bind9 re
 
 > Script dibawah ini terdapat pada **root node Berlint**, untuk menjalankannya bisa langsung dengan melakukan command `bash no5.sh`
 
-- Berlint
+- **Berlint**
     
     ```
     echo -e '
-    zone "wise.B11.com" {
+    zone "wise.b11.com" {
         type slave;
         masters { 192.178.3.2; }; // Masukan IP WISE tanpa tanda petik
-        file "/var/lib/bind/wise.B11.com";
+        file "/var/lib/bind/wise.b11.com";
     };
      ' > /etc/bind/named.conf.local
-    
+
     service bind9 restart
     ```
 
@@ -439,7 +446,7 @@ Pada server WISE kita akan mematikan service bind9 dengan command `service bind9
 
 > Script dibawah ini terdapat pada **root node SSS & Garden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no5test.sh`
 
-- WISE
+- **WISE**
     
     ```
     echo -e "--------------------------------------------------------------------------------------"
@@ -452,15 +459,9 @@ Kemudian pada node client (SSS & Garden), kita harus menambahkan nameserver Berl
 
 > Script dibawah ini terdapat pada **root node SSS & Garden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no5.sh`
 
-- SSS & Garden
+- **SSS & Garden**
     
     ```
-    echo -e '
-    nameserver 192.178.3.2          ; IP WISE
-    nameserver 192.178.2.2          ; IP Berlint
-    nameserver 192.168.122.1
-    ' > /etc/resolv.conf
-
     echo -e "--------------------------------------------------------------------------------------"
     echo "TES SLAVE DNS, DNS MASTER DI STOP"
     ping wise.B11.com -c 3
@@ -484,7 +485,7 @@ Setelah selesai maka kita harus merestart bind9 dengan command `service bind9 re
 
 > Script dibawah ini terdapat pada **root node WISE**, untuk menjalankannya bisa langsung dengan melakukan command `bash no6.sh`
 
-- WISE
+- **WISE**
     
     ```
     echo -e '
@@ -492,30 +493,29 @@ Setelah selesai maka kita harus merestart bind9 dengan command `service bind9 re
     ; BIND data file for local loopback interface
     ;
     $TTL    604800
-    @       IN      SOA     wise.B11.com. root.wise.B11.com. (
+    @       IN      SOA     wise.b11.com. root.wise.b11.com. (
                                   2         ; Serial
                              604800         ; Refresh
                               86400         ; Retry
                             2419200         ; Expire
                              604800 )       ; Negative Cache TTL
     ;
-    @                       IN      NS      wise.B11.com.
-    @                       IN      A       192.178.3.2             ; IP WISE
-    www                     IN      CNAME   wise.B11.com.
-    eden                    IN      A       192.178.2.3             ; IP Eden
-    www.eden                IN      CNAME   eden.wise.B11.com.      ; IP Eden
-    ns1                     IN      A       192.178.2.2             ; IP Berlint
-    operation               IN      NS      ns1
-    @                       IN      AAAA    ::1
-    ' > /etc/bind/wise/wise.B11.com
+    @               	IN      NS      wise.b11.com.
+    @               	IN      A       192.178.3.2             ; IP WISE
+    www             	IN      CNAME   wise.b11.com.
+    eden            	IN      A       192.178.2.3             ; IP Eden
+    www.eden	        IN      CNAME   eden.wise.b11.com.      ; IP Eden
+    ns1			IN	A	192.178.2.2		; IP Berlint
+    operation		IN	NS	ns1
+    ' > /etc/bind/wise/wise.b11.com
 
     echo -e '
-    zone "wise.B11.com" {
+    zone "wise.b11.com" {
             type master;
-            notify yes;
+    	notify yes;
             also-notify { 192.178.2.2; }; // Masukan IP Berlint tanpa tanda petik
             allow-transfer { 192.178.2.2; }; // Masukan IP Berlint tanpa tanda petik
-            file "/etc/bind/wise/wise.B11.com";
+    	file "/etc/bind/wise/wise.b11.com";
     };
 
     zone "3.178.192.in-addr.arpa" {
@@ -546,14 +546,14 @@ Setelah selesai maka kita harus merestart bind9 dengan command `service bind9 re
     };
     ' > /etc/bind/named.conf.options
 
-    service bind9 restart    
+    service bind9 restart
     ```
 
 Setelah selesai maka kita harus merestart bind9 dengan command `service bind9 restart`.
 
 > Script dibawah ini terdapat pada **root node Berlint**, untuk menjalankannya bisa langsung dengan melakukan command `bash no6.sh`
 
-- Berlint
+- **Berlint**
     
     ```
     echo -e '
@@ -579,14 +579,14 @@ Setelah selesai maka kita harus merestart bind9 dengan command `service bind9 re
     ' > /etc/bind/named.conf.options
 
     echo -e '
-    zone "wise.B11.com" {
+    zone "wise.b11.com" {
         type slave;
         masters { 192.178.3.2; }; // Masukan IP WISE tanpa tanda petik
-        file "/var/lib/bind/wise.B11.com";
+        file "/var/lib/bind/wise.b11.com";
     };
-    zone "operation.wise.B11.com" {
+    zone "operation.wise.b11.com" {
             type master;
-            file "/etc/bind/operation/operation.wise.B11.com";
+            file "/etc/bind/operation/operation.wise.b11.com";
     };
     ' > /etc/bind/named.conf.local
 
@@ -594,17 +594,17 @@ Setelah selesai maka kita harus merestart bind9 dengan command `service bind9 re
 
     echo -e '
     $TTL    604800
-    @       IN      SOA     operation.wise.B11.com. root.operation.wise.B11.com. (
+    @       IN      SOA     operation.wise.b11.com. root.operation.wise.b11.com. (
                                   2         ; Serial
                              604800         ; Refresh
                               86400         ; Retry
                             2419200         ; Expire
                              604800 )       ; Negative Cache TTL
     ;
-    @               IN      NS          operation.wise.B11.com.
-    @               IN      A           192.178.2.3                 ; IP Eden
-    www             IN      CNAME       operation.wise.B11.com.
-    ' > /etc/bind/operation/operation.wise.B11.com
+    @       	IN      NS          operation.wise.b11.com.
+    @       	IN      A           192.178.2.3			; IP Eden
+    www       	IN      CNAME       operation.wise.b11.com.
+    ' > /etc/bind/operation/operation.wise.b11.com
 
     service bind9 restart
     ```
@@ -613,7 +613,7 @@ Kemudian kita akan mengecek dengan melakukan test ping `ping operation.wise.B11.
 
 > Script dibawah ini terdapat pada **root node SSS & Garden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no6.sh`
 
-- SSS & Garden
+- **SSS & Garden**
     
     ```
     echo "----------------------------------------------------------------"
@@ -640,24 +640,24 @@ Setelah selesai maka kita harus merestart bind9 dengan command `service bind9 re
 
 > Script dibawah ini terdapat pada **root node Berlint**, untuk menjalankannya bisa langsung dengan melakukan command `bash no7.sh`
 
-- Berlint
+- **Berlint**
     
     ```
     echo -e '
     $TTL    604800
-    @       IN      SOA     operation.wise.B11.com. root.operation.wise.B11.com. (
+    @       IN      SOA     operation.wise.b11.com. root.operation.wise.b11.com. (
                                   2         ; Serial
                              604800         ; Refresh
                               86400         ; Retry
                             2419200         ; Expire
                              604800 )       ; Negative Cache TTL
     ;
-    @               IN      NS              operation.wise.B11.com.
-    @               IN      A               192.178.2.3                     ; IP Eden
-    www             IN      CNAME           operation.wise.B11.com.
-    strix           IN      A               192.178.2.3                     ; IP Eden
-    www.strix       IN      CNAME           strix.operation.wise.B11.com.
-    ' > /etc/bind/operation/operation.wise.B11.com
+    @               IN      NS		operation.wise.b11.com.
+    @               IN      A		192.178.2.3			; IP Eden
+    www             IN      CNAME		operation.wise.b11.com.
+    strix		IN	A		192.178.2.3			; IP Eden
+    www.strix	IN	CNAME		strix.operation.wise.b11.com.
+    ' > /etc/bind/operation/operation.wise.b11.com
 
     service bind9 restart
     ```
@@ -666,7 +666,7 @@ Kemudian kita akan mengecek dengan melakukan test ping `ping strix.operation.wis
 
 > Script dibawah ini terdapat pada **root node SSS & Garden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no7.sh`
 
-- SSS & Garden
+- **SSS & Garden**
     
     ```
     echo -e "--------------------------------------------------------------------------------------"
@@ -689,19 +689,70 @@ Kemudian kita akan mengecek dengan melakukan test ping `ping strix.operation.wis
 
 ### Script
 
-- WISE
+PENJELASAN
+
+> Script dibawah ini terdapat pada **root node WISE**, untuk menjalankannya bisa langsung dengan melakukan command `bash no8.sh`
+
+- **WISE**
     
     ```
+    echo -e '
+    ;
+    ; BIND data file for local loopback interface
+    ;
+    $TTL    604800
+    @       IN      SOA     wise.b11.com. root.wise.b11.com. (
+                                  2         ; Serial
+                             604800         ; Refresh
+                              86400         ; Retry
+                            2419200         ; Expire
+                             604800 )       ; Negative Cache TTL
+    ;
+    @                       IN      NS      wise.b11.com.
+    @                       IN      A       192.178.2.3             ; IP Eden
+    www                     IN      CNAME   wise.b11.com.
+    eden                    IN      A       192.178.2.3             ; IP Eden
+    www.eden                IN      CNAME   eden.wise.b11.com.      ; IP Eden
+    ns1                     IN      A       192.178.2.2             ; IP Berlint
+    operation               IN      NS      ns1
+    ' > /etc/bind/wise/wise.b11.com
+
+    service bind9 restart
     ```
 
-- Eden
+PENJELASAN
+
+> Script dibawah ini terdapat pada **root node Eden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no8.sh`
+
+- **Eden**
     
     ```
+    echo "<VirtualHost *:80>
+            ServerAdmin webmaster@localhost
+            DocumentRoot /var/www/wise.b11.com
+            ServerName wise.b11.com
+            ServerAlias www.wise.b11.com
+            ErrorLog \${APACHE_LOG_DIR}/error.log
+            CustomLog \${APACHE_LOG_DIR}/access.log combined
+    </VirtualHost>" > /etc/apache2/sites-available/wise.b11.com.conf
+
+    a2ensite wise.b11.com
+
+    mkdir /var/www/wise.b11.com
+
+    cp -RT /var/www/wise /var/www/wise.b11.com
+
+    service apache2 restart
     ```
 
-- SSS & Garden
+PENJELASAN
+
+> Script dibawah ini terdapat pada **root node SSS & Garden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no8.sh`
+
+- **SSS & Garden**
     
     ```
+    lynx wise.B11.com
     ``` 
 
 ### Test
@@ -710,18 +761,46 @@ Kemudian kita akan mengecek dengan melakukan test ping `ping strix.operation.wis
 
 
 ## Question 9
+
 > Setelah itu, Loid juga membutuhkan agar url www.wise.yyy.com/index.php/home dapat menjadi menjadi www.wise.yyy.com/home
 
 ### Script
 
-- Eden
+PENJELASAN
+
+> Script dibawah ini terdapat pada **root node Eden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no9.sh`
+
+- **Eden**
     
     ```
+    echo "<VirtualHost *:80>
+            ServerAdmin webmaster@localhost
+            DocumentRoot /var/www/wise.b11.com
+            ServerName wise.b11.com
+            ServerAlias www.wise.b11.com
+
+    	<Directory /var/www/wise.b11.com/index.php/home>
+                    Options +Indexes
+            </Directory>
+            Alias "/home" "/var/www/wise.b11.com/index.php/home"
+
+            ErrorLog \${APACHE_LOG_DIR}/error.log
+            CustomLog \${APACHE_LOG_DIR}/access.log combined
+    </VirtualHost>" > /etc/apache2/sites-available/wise.b11.com.conf
+
+    a2ensite wise.b11.com
+
+    service apache2 restart
     ```
 
-- SSS & Garden
+PENJELASAN
+
+> Script dibawah ini terdapat pada **root node SSS & Garden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no9.sh`
+
+- **SSS & Garden**
     
     ```
+    lynx wise.B11.com/home
     ``` 
 
 ### Test
@@ -730,34 +809,492 @@ Kemudian kita akan mengecek dengan melakukan test ping `ping strix.operation.wis
 
 
 ## Question 10
+
 > Setelah itu, pada subdomain www.eden.wise.yyy.com, Loid membutuhkan penyimpanan aset yang memiliki DocumentRoot pada /var/www/eden.wise.yyy.com
+
+### Script
+
+PENJELASAN
+
+> Script dibawah ini terdapat pada **root node Eden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no10.sh`
+
+- **Eden**
+    
+    ```
+    a2enmod rewrite
+
+    service apache2 restart
+
+    echo "RewriteEngine On
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule (.*) /index.php/\$1 [L]" > /var/www/wise.b11.com/.htaccess
+
+    echo "<VirtualHost *:80>
+            ServerAdmin webmaster@localhost
+            DocumentRoot /var/www/wise.b11.com
+            ServerName wise.b11.com
+            ServerAlias www.wise.b11.com
+            ErrorLog \${APACHE_LOG_DIR}/error.log
+            CustomLog \${APACHE_LOG_DIR}/access.log combined
+            <Directory /var/www/wise.b11.com>
+                    Options +FollowSymLinks -Multiviews
+                    AllowOverride All
+            </Directory>
+    </VirtualHost>" > /etc/apache2/sites-available/wise.b11.com.conf
+
+    service apache2 restart
+
+    echo "<VirtualHost *:80>
+            ServerAdmin webmaster@localhost
+            DocumentRoot /var/www/eden.wise.b11.com
+            ServerName eden.wise.b11.com
+            ServerAlias www.eden.wise.b11.com
+            ErrorLog \${APACHE_LOG_DIR}/error.log
+            CustomLog \${APACHE_LOG_DIR}/access.log combined
+            <Directory /var/www/wise.b11.com>
+                    Options +FollowSymLinks -Multiviews
+                    AllowOverride All
+            </Directory>
+    </VirtualHost>" > /etc/apache2/sites-available/eden.wise.b11.com.conf
+
+    a2ensite eden.wise.b11.com
+
+    mkdir /var/www/eden.wise.b11.com
+
+    cp -RT /var/www/eden.wise/ /var/www/eden.wise.b11.com
+
+    service apache2 restart
+    ```
+
+PENJELASAN
+
+> Script dibawah ini terdapat pada **root node SSS & Garden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no10.sh`
+
+- **SSS & Garden**
+    
+    ```
+    lynx http://www.eden.wise.b11.com
+    ``` 
+
+### Test
+
+![image](https://raw.githubusercontent.com/Chroax/Jarkom-Modul-2-B11-2022/main/image/Soal10/Capture1.PNG)
 
 
 ## Question 11
+
 > Akan tetapi, pada folder /public, Loid ingin hanya dapat melakukan directory listing saja
+
+### Script
+
+PENJELASAN
+
+> Script dibawah ini terdapat pada **root node Eden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no11.sh`
+
+- **Eden**
+    
+    ```
+    echo "<VirtualHost *:80>
+            ServerAdmin webmaster@localhost
+            DocumentRoot /var/www/eden.wise.b11.com
+            ServerName eden.wise.b11.com
+            ServerAlias www.eden.wise.b11.com
+            <Directory /var/www/eden.wise.b11.com/public>
+                    Options +Indexes
+            </Directory>
+            ErrorLog \${APACHE_LOG_DIR}/error.log
+            CustomLog \${APACHE_LOG_DIR}/access.log combined
+            <Directory /var/www/wise.b11.com>
+                    Options +FollowSymLinks -Multiviews
+                    AllowOverride All
+            </Directory>
+    </VirtualHost>" > /etc/apache2/sites-available/eden.wise.b11.com.conf
+
+    service apache2 restart
+    ```
+
+PENJELASAN
+
+> Script dibawah ini terdapat pada **root node SSS & Garden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no11.sh`
+
+- **SSS & Garden**
+    
+    ```
+    lynx http://www.eden.wise.b11.com/public
+    ``` 
+
+### Test
+
+![image](https://raw.githubusercontent.com/Chroax/Jarkom-Modul-2-B11-2022/main/image/Soal11/Capture1.PNG)
 
 
 ## Question 12
+
 > Tidak hanya itu, Loid juga ingin menyiapkan error file 404.html pada folder /error untuk mengganti error kode pada apache
+
+### Script
+
+PENJELASAN
+
+> Script dibawah ini terdapat pada **root node Eden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no12.sh`
+
+- **Eden**
+    
+    ```
+    echo "<VirtualHost *:80>
+            ServerAdmin webmaster@localhost
+            DocumentRoot /var/www/eden.wise.b11.com
+            ServerName eden.wise.b11.com
+            ServerAlias www.eden.wise.b11.com
+            ErrorDocument 404 /error/404.html
+            ErrorDocument 500 /error/404.html
+            ErrorDocument 502 /error/404.html
+            ErrorDocument 503 /error/404.html
+            ErrorDocument 504 /error/404.html
+            <Directory /var/www/eden.wise.b11.com/public>
+                    Options +Indexes
+            </Directory>
+            ErrorLog \${APACHE_LOG_DIR}/error.log
+            CustomLog \${APACHE_LOG_DIR}/access.log combined
+            <Directory /var/www/wise.b11.com>
+                    Options +FollowSymLinks -Multiviews
+                    AllowOverride All
+            </Directory>
+    </VirtualHost>" > /etc/apache2/sites-available/eden.wise.b11.com.conf
+
+    service apache2 restart
+    ```
+
+PENJELASAN
+
+> Script dibawah ini terdapat pada **root node SSS & Garden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no12.sh`
+
+- **SSS & Garden**
+    
+    ```
+    lynx http://www.eden.wise.b11.com/gataulah
+    ``` 
+
+### Test
+
+![image](https://raw.githubusercontent.com/Chroax/Jarkom-Modul-2-B11-2022/main/image/Soal12/Capture1.PNG)
 
 
 ## Question 13
-> Loid juga meminta Franky untuk dibuatkan
-konfigurasi virtual host. Virtual host ini bertujuan untuk dapat mengakses file asset www.eden.wise.yyy.com/public/js menjadi www.eden.wise.yyy.com/js
+
+> Loid juga meminta Franky untuk dibuatkan konfigurasi virtual host. Virtual host ini bertujuan untuk dapat mengakses file asset www.eden.wise.yyy.com/public/js menjadi www.eden.wise.yyy.com/js
+
+### Script
+
+PENJELASAN
+
+> Script dibawah ini terdapat pada **root node Eden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no13.sh`
+
+- **Eden**
+    
+    ```
+    echo "<VirtualHost *:80>
+            ServerAdmin webmaster@localhost
+            DocumentRoot /var/www/eden.wise.b11.com
+            ServerName eden.wise.b11.com
+            ServerAlias www.eden.wise.b11.com
+            ErrorDocument 404 /error/404.html
+            ErrorDocument 500 /error/404.html
+            ErrorDocument 502 /error/404.html
+            ErrorDocument 503 /error/404.html
+            ErrorDocument 504 /error/404.html
+            <Directory /var/www/eden.wise.b11.com/public>
+                    Options +Indexes
+            </Directory>
+            Alias \"/js\" \"/var/www/eden.wise.b11.com/public/js\"
+            ErrorLog \${APACHE_LOG_DIR}/error.log
+            CustomLog \${APACHE_LOG_DIR}/access.log combined
+            <Directory /var/www/wise.b11.com>
+                    Options +FollowSymLinks -Multiviews
+                    AllowOverride All
+            </Directory>
+    </VirtualHost>
+    " > /etc/apache2/sites-available/eden.wise.b11.com.conf
+
+    service apache2 restart
+    ```
+
+PENJELASAN
+
+> Script dibawah ini terdapat pada **root node SSS & Garden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no13.sh`
+
+- **SSS & Garden**
+    
+    ```
+    lynx http://www.eden.wise.b11.com/js
+    ```
+
+### Test
+
+![image](https://raw.githubusercontent.com/Chroax/Jarkom-Modul-2-B11-2022/main/image/Soal13/Capture1.PNG)
 
 
 ## Question 14
+
 > Loid meminta agar www.strix.operation.wise.yyy.com hanya bisa diakses dengan port 15000 dan port 15500
+
+### Script
+
+PENJELASAN
+
+> Script dibawah ini terdapat pada **root node Eden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no14.sh`
+
+- **Eden**
+    
+    ```
+    echo "<VirtualHost *:15000>
+            ServerAdmin webmaster@localhost
+            DocumentRoot /var/www/strix.operation.wise.b11.com
+            ServerName strix.operation.wise.b11.com
+            ServerAlias www.strix.operation.wise.b11.com
+            ErrorLog \${APACHE_LOG_DIR}/error.log
+            CustomLog \${APACHE_LOG_DIR}/access.log combined
+    </VirtualHost>
+    <VirtualHost *:15500>
+            ServerAdmin webmaster@localhost
+            DocumentRoot /var/www/strix.operation.wise.b11.com
+            ServerName strix.operation.wise.b11.com
+            ServerAlias www.strix.operation.wise.b11.com
+
+            ErrorLog \${APACHE_LOG_DIR}/error.log
+            CustomLog \${APACHE_LOG_DIR}/access.log combined
+    </VirtualHost>" > /etc/apache2/sites-available/strix.operation.wise.b11.com.conf
+
+    a2ensite strix.operation.wise.b11.com
+
+    service apache2 restart
+
+    mkdir /var/www/strix.operation.wise.b11.com
+
+    cp -RT /var/www/strix.operation.wise/ /var/www/strix.operation.wise.b11.com/
+
+    echo "# If you just change the port or add more ports here, you will likely also
+    # have to change the VirtualHost statement in
+    # /etc/apache2/sites-enabled/000-default.conf
+    Listen 80
+    Listen 15000
+    Listen 15500
+    <IfModule ssl_module>
+            Listen 443
+    </IfModule>
+    <IfModule mod_gnutls.c>
+            Listen 443
+    </IfModule>" > /etc/apache2/ports.conf
+
+    service apache2 restart
+    ```
+
+PENJELASAN
+
+> Script dibawah ini terdapat pada **root node SSS**, untuk menjalankannya bisa langsung dengan melakukan command `bash no14.sh`
+
+- **SSS**
+    
+    ```
+    lynx www.strix.operation.wise.b11.com:15000
+    ``` 
+
+PENJELASAN
+
+> Script dibawah ini terdapat pada **root node Garden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no14.sh`
+
+- **Garden**
+    
+    ```
+    lynx www.strix.operation.wise.b11.com:15500
+    ``` 
+
+### Test
+
+![image](https://raw.githubusercontent.com/Chroax/Jarkom-Modul-2-B11-2022/main/image/Soal14/Capture1.PNG)
+
+![image](https://raw.githubusercontent.com/Chroax/Jarkom-Modul-2-B11-2022/main/image/Soal14/Capture2.PNG)
 
 
 ## Question 15
+
 > dengan autentikasi username Twilight dan password opStrix dan file di /var/www/strix.operation.wise.yyy
+
+### Script
+
+PENJELASAN
+
+> Script dibawah ini terdapat pada **root node Eden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no15.sh`
+
+- **Eden**
+    
+    ```
+    htpasswd -c -b /etc/apache2/.htpasswd Twilight opStrix
+
+    echo "<VirtualHost *:15000>
+            ServerAdmin webmaster@localhost
+            DocumentRoot /var/www/strix.operation.wise.b11.com
+            ServerName strix.operation.wise.b11.com
+            ServerAlias www.strix.operation.wise.b11.com
+            <Directory \"/var/www/strix.operation.wise.b11.com\">
+                    AuthType Basic
+                    AuthName \"Restricted Content\"
+                    AuthUserFile /etc/apache2/.htpasswd
+                    Require valid-user
+            </Directory>
+            ErrorLog \${APACHE_LOG_DIR}/error.log
+            CustomLog \${APACHE_LOG_DIR}/access.log combined
+    </VirtualHost>
+    <VirtualHost *:15500>
+            ServerAdmin webmaster@localhost
+            DocumentRoot /var/www/strix.operation.wise.b11.com
+            ServerName strix.operation.wise.b11.com
+            ServerAlias www.strix.operation.wise.b11.com
+
+            <Directory \"/var/www/strix.operation.wise.b11.com\">
+                    AuthType Basic
+                    AuthName \"Restricted Content\"
+                    AuthUserFile /etc/apache2/.htpasswd
+                    Require valid-user
+            </Directory>
+
+            ErrorLog \${APACHE_LOG_DIR}/error.log
+            CustomLog \${APACHE_LOG_DIR}/access.log combined
+    </VirtualHost>" > /etc/apache2/sites-available/strix.operation.wise.b11.com.conf
+
+    service apache2 restart
+    ```
+
+PENJELASAN
+
+> Script dibawah ini terdapat pada **root node SSS & Garden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no15.sh`
+
+- **SSS & Garden**
+    
+    ```
+    lynx www.strix.operation.wise.b11.com:15500
+    ``` 
+
+### Test
+
+![image](https://raw.githubusercontent.com/Chroax/Jarkom-Modul-2-B11-2022/main/image/Soal15/Capture1.PNG)
+
+![image](https://raw.githubusercontent.com/Chroax/Jarkom-Modul-2-B11-2022/main/image/Soal15/Capture2.PNG)
+
+![image](https://raw.githubusercontent.com/Chroax/Jarkom-Modul-2-B11-2022/main/image/Soal15/Capture3.PNG)
 
 
 ## Question 16
+
 > dan setiap kali mengakses IP Eden akan dialihkan secara otomatis ke www.wise.yyy.com
+
+### Script
+
+PENJELASAN
+
+> Script dibawah ini terdapat pada **root node Eden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no16.sh`
+
+- **Eden**
+    
+    ```
+    echo "<VirtualHost *:80>
+            ServerAdmin webmaster@localhost
+            DocumentRoot /var/www/html
+            RewriteEngine On
+            RewriteCond %{HTTP_HOST} !^wise.b11.com$
+            RewriteRule /.* http://wise.b11.com/ [R]
+            ErrorLog \${APACHE_LOG_DIR}/error.log
+            CustomLog \${APACHE_LOG_DIR}/access.log combined
+    </VirtualHost>" > /etc/apache2/sites-available/000-default.conf
+
+    service apache2 restart
+    ```
+
+PENJELASAN
+
+> Script dibawah ini terdapat pada **root node SSS & Garden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no16.sh`
+
+- **SSS & Garden**
+    
+    ```
+    lynx 192.178.2.3
+    ``` 
+
+### Test
+
+![image](https://raw.githubusercontent.com/Chroax/Jarkom-Modul-2-B11-2022/main/image/Soal16/Capture1.PNG)
+
+![image](https://raw.githubusercontent.com/Chroax/Jarkom-Modul-2-B11-2022/main/image/Soal16/Capture2.PNG)
 
 
 ## Question 17
+
 > Karena website www.eden.wise.yyy.com semakin banyak pengunjung dan banyak modifikasi sehingga banyak gambar-gambar yang random, maka Loid ingin mengubah request gambar yang memiliki substring “eden” akan diarahkan menuju eden.png. Bantulah Agent Twilight dan Organisasi WISE menjaga perdamaian!
- 
+
+### Script
+
+PENJELASAN
+
+> Script dibawah ini terdapat pada **root node Eden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no17.sh`
+
+- **Eden**
+    
+    ```
+    echo "RewriteEngine On
+    RewriteCond %{REQUEST_URI} ^/public/images/(.*)eden(.*)
+    RewriteCond %{REQUEST_URI} !/public/images/eden.png
+    RewriteRule eden http://eden.wise.b11.com/public/images/eden.png$1 [L,R=301]" > /var/www/eden.wise.b11.com/.htaccess
+
+    echo "<VirtualHost *:80>
+            ServerAdmin webmaster@localhost
+            DocumentRoot /var/www/eden.wise.b11.com
+            ServerName eden.wise.b11.com
+            ServerAlias www.eden.wise.b11.com
+            ErrorDocument 404 /error/404.html
+            ErrorDocument 500 /error/404.html
+            ErrorDocument 502 /error/404.html
+            ErrorDocument 503 /error/404.html
+            ErrorDocument 504 /error/404.html
+            <Directory /var/www/eden.wise.b11.com/public>
+                    Options +Indexes
+            </Directory>
+            Alias \"/js\" \"/var/www/eden.wise.b11.com/public/js\"
+            <Directory /var/www/eden.wise.b11.com>
+                    Options +FollowSymLinks -Multiviews
+                    AllowOverride All
+            </Directory>
+            ErrorLog \${APACHE_LOG_DIR}/error.log
+            CustomLog \${APACHE_LOG_DIR}/access.log combined
+            <Directory /var/www/wise.b11.com>
+                    Options +FollowSymLinks -Multiviews
+                    AllowOverride All
+            </Directory>
+    </VirtualHost>" > /etc/apache2/sites-available/eden.wise.b11.com.conf
+
+    a2enmod rewrite
+
+    service apache2 restart
+    ```
+
+PENJELASAN
+
+> Script dibawah ini terdapat pada **root node SSS & Garden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no17.sh`
+
+- **SSS & Garden**
+    
+    ```
+    lynx http://www.eden.wise.b11.com/public/images/not-eden.png
+    ``` 
+
+### Test
+
+![image](https://raw.githubusercontent.com/Chroax/Jarkom-Modul-2-B11-2022/main/image/Soal17/Capture1.PNG)
+
+![image](https://raw.githubusercontent.com/Chroax/Jarkom-Modul-2-B11-2022/main/image/Soal17/Capture2.PNG)
+
+## Kendala
+
+- Kendala 1
+
+- Kendala 2
