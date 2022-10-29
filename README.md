@@ -769,8 +769,7 @@ Setelah itu, jalankan perintah `lynx wise.B11.com`.
 > Setelah itu, Loid juga membutuhkan agar url www.wise.yyy.com/index.php/home dapat menjadi menjadi www.wise.yyy.com/home
 
 ### Script
-
-Lalu, kita menambahkan Directory agar bisa melakukan direct ke `/index.php/home`.
+Tambahkan `Alias "/home" "/var/www/wise.b11.com/index.php/home"` pada conf agar bisa melakukan direct ke `/index.php/home`.
 
 > Script dibawah ini terdapat pada **root node Eden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no9.sh`
 
@@ -796,8 +795,6 @@ Lalu, kita menambahkan Directory agar bisa melakukan direct ke `/index.php/home`
 
     service apache2 restart
     ```
-
-Setelah itu, jalankan perintah `lynx wise.B11.com/home`.
 
 > Script dibawah ini terdapat pada **root node SSS & Garden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no9.sh`
 
@@ -991,7 +988,7 @@ Setelah itu, jalankan perintah `lynx http://www.eden.wise.b11.com/gataulah`.
 
 ### Script
 
-Lakukan konfigurasi pada `/eden.wise.b11.com`. Lalu, tambahkan konfigurasi Alias.
+Lakukan konfigurasi pada `/eden.wise.b11.com`. Lalu, tambahkan konfigurasi Alias, `Alias \"/js\" \"/var/www/eden.wise.b11.com/public/js\"`.
 
 > Script dibawah ini terdapat pada **root node Eden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no13.sh`
 
@@ -1024,7 +1021,7 @@ Lakukan konfigurasi pada `/eden.wise.b11.com`. Lalu, tambahkan konfigurasi Alias
     service apache2 restart
     ```
 
-Setelah itu, jalankan perintah `lynx http://www.eden.wise.b11.com/js`.
+Restart kemudian jalankan perintah `lynx http://www.eden.wise.b11.com/js` di Client.
 
 > Script dibawah ini terdapat pada **root node SSS & Garden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no13.sh`
 
@@ -1045,7 +1042,7 @@ Setelah itu, jalankan perintah `lynx http://www.eden.wise.b11.com/js`.
 
 ### Script
 
-Lakukan konfigurasi pada `/strix.operation.wise.b11.com`. Lalu, tambahkan VirtualHost baru yang berada di port 15000 dan 15500.
+Lakukan konfigurasi pada `/strix.operation.wise.b11.com`. Lalu, buat config baru general.mecha.e10.com-15000.conf, virtualHost baru yang berada di port 15000 dan 15500.
 
 > Script dibawah ini terdapat pada **root node Eden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no14.sh`
 
@@ -1300,5 +1297,6 @@ Setelah itu, jalankan perintah `lynx http://www.eden.wise.b11.com/public/images/
 ## Kendala
 
 - Kendala 1
+    Versi GNS yang berbeda, jadi pas mau import file selalu tidak bisa. Solusinya samain versi GNS dengan teman kelompok.
 
 - Kendala 2
