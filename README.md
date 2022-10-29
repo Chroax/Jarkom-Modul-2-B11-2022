@@ -193,6 +193,8 @@ Pada initial project, kami mengubah `root/.bashrc` masing-masing node sehingga s
 
 ### Script
 
+PENJELASAN
+
 Setelah berhasil melakukan konfigurasi dan selesai menjalankan start command, kita akan melakukan pengecekan internet untuk semua node dengan melakukan ping terhadap `google.com`.
 
 > Script dibawah ini terdapat pada **root semua node**, untuk menjalankannya bisa langsung dengan melakukan command `bash no1.sh`
@@ -219,6 +221,8 @@ Setelah berhasil melakukan konfigurasi dan selesai menjalankan start command, ki
 > Untuk mempermudah mendapatkan informasi mengenai misi dari Handler, bantulah Loid membuat website utama dengan akses wise.yyy.com dengan alias www.wise.yyy.com pada folder wise
 
 ### Script
+
+PENJELASAN
 
 Pertama-tama pada node WISE (Master), kita harus konfigurasikan `/etc/bind/named.conf.local` dengan domain wise.B11.com. Setelah itu buatlah direktori `/etc/bind/wise`. Kemudian buatlah file `wise.B11.com` pada direktori yang baru saja dibuat dan isilah file sesuai dengan contoh dibawah ini (setelah command `mkdir /etc/bind/wise`). Setelah selesai maka kita harus merestart bind9 dengan command `service bind9 restart`.
 
@@ -257,6 +261,8 @@ Pertama-tama pada node WISE (Master), kita harus konfigurasikan `/etc/bind/named
 
 Kemudian pada node client (SSS & Garden), kita harus lakukan setting nameserver yang ada. Kemudian kita akan mengecek dengan melakukan `host -t CNAME www.wise.B11.com` dan `www.wise.B11.com -c 3`.
 
+PENJELASAN
+
 > Script dibawah ini terdapat pada **root node SSS & Garden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no2.sh`
 
 - **SSS & Garden**
@@ -281,6 +287,8 @@ Kemudian pada node client (SSS & Garden), kita harus lakukan setting nameserver 
 > Setelah itu ia juga ingin membuat subdomain eden.wise.yyy.com dengan alias www.eden.wise.yyy.com yang diatur DNS-nya di WISE dan mengarah ke Eden
 
 ### Script
+
+PENJELASAN
 
 Untuk membuat subdomain kita harus menambahkan `eden            IN      A       192.178.2.3             ; IP Eden` pada file `/etc/bind/wise/wise.B11.com`. Kemudian tambahkan juga `www.eden        IN      CNAME   eden.wise.B11.com.` pada file yang sama. Setelah selesai maka kita harus merestart bind9 dengan command `service bind9 restart`.
 
@@ -313,6 +321,8 @@ Untuk membuat subdomain kita harus menambahkan `eden            IN      A       
 
 Kemudian kita akan mengecek dengan melakukan test ping `ping eden.wise.B11.com -c 3` dan test cname `host -t CNAME www.eden.wise.B11.com`.
 
+PENJELASAN
+
 > Script dibawah ini terdapat pada **root node SSS & Garden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no3.sh`
 
 - **SSS & Garden**
@@ -337,6 +347,8 @@ Kemudian kita akan mengecek dengan melakukan test ping `ping eden.wise.B11.com -
 > Buat juga reverse domain untuk domain utama
 
 ### Script
+
+PENJELASAN
 
 Untuk membuat reverse domain kita memerlukan tambahan Zone Baru, tambahkan zone tersebut pada file `/etc/bind/named.conf.local` sesuai dengan ip kita.  Kemudian buatlah sebuah file pada direktori `/etc/bind/wise/` dengan nama file `"3 byte reverse ip kita".in-addr.arpa`. Setelah selesai maka kita harus merestart bind9 dengan command `service bind9 restart`.
 
@@ -375,6 +387,8 @@ Untuk membuat reverse domain kita memerlukan tambahan Zone Baru, tambahkan zone 
     ```
 
 Kemudian kita akan mengecek reverse domain dengan melakukan `host -t PTR 192.178.3.2`.
+
+PENJELASAN
 
 > Script dibawah ini terdapat pada **root node SSS & Garden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no4.sh`
 
