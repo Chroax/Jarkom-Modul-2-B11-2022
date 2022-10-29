@@ -193,8 +193,6 @@ Pada initial project, kami mengubah `root/.bashrc` masing-masing node sehingga s
 
 ### Script
 
-PENJELASAN
-
 Setelah berhasil melakukan konfigurasi dan selesai menjalankan start command, kita akan melakukan pengecekan internet untuk semua node dengan melakukan ping terhadap `google.com`.
 
 > Script dibawah ini terdapat pada **root semua node**, untuk menjalankannya bisa langsung dengan melakukan command `bash no1.sh`
@@ -221,8 +219,6 @@ Setelah berhasil melakukan konfigurasi dan selesai menjalankan start command, ki
 > Untuk mempermudah mendapatkan informasi mengenai misi dari Handler, bantulah Loid membuat website utama dengan akses wise.yyy.com dengan alias www.wise.yyy.com pada folder wise
 
 ### Script
-
-PENJELASAN
 
 Pertama-tama pada node WISE (Master), kita harus konfigurasikan `/etc/bind/named.conf.local` dengan domain wise.B11.com. Setelah itu buatlah direktori `/etc/bind/wise`. Kemudian buatlah file `wise.B11.com` pada direktori yang baru saja dibuat dan isilah file sesuai dengan contoh dibawah ini (setelah command `mkdir /etc/bind/wise`). Setelah selesai maka kita harus merestart bind9 dengan command `service bind9 restart`.
 
@@ -261,8 +257,6 @@ Pertama-tama pada node WISE (Master), kita harus konfigurasikan `/etc/bind/named
 
 Kemudian pada node client (SSS & Garden), kita harus lakukan setting nameserver yang ada. Kemudian kita akan mengecek dengan melakukan `host -t CNAME www.wise.B11.com` dan `www.wise.B11.com -c 3`.
 
-PENJELASAN
-
 > Script dibawah ini terdapat pada **root node SSS & Garden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no2.sh`
 
 - **SSS & Garden**
@@ -287,8 +281,6 @@ PENJELASAN
 > Setelah itu ia juga ingin membuat subdomain eden.wise.yyy.com dengan alias www.eden.wise.yyy.com yang diatur DNS-nya di WISE dan mengarah ke Eden
 
 ### Script
-
-PENJELASAN
 
 Untuk membuat subdomain kita harus menambahkan `eden            IN      A       192.178.2.3             ; IP Eden` pada file `/etc/bind/wise/wise.B11.com`. Kemudian tambahkan juga `www.eden        IN      CNAME   eden.wise.B11.com.` pada file yang sama. Setelah selesai maka kita harus merestart bind9 dengan command `service bind9 restart`.
 
@@ -321,8 +313,6 @@ Untuk membuat subdomain kita harus menambahkan `eden            IN      A       
 
 Kemudian kita akan mengecek dengan melakukan test ping `ping eden.wise.B11.com -c 3` dan test cname `host -t CNAME www.eden.wise.B11.com`.
 
-PENJELASAN
-
 > Script dibawah ini terdapat pada **root node SSS & Garden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no3.sh`
 
 - **SSS & Garden**
@@ -347,8 +337,6 @@ PENJELASAN
 > Buat juga reverse domain untuk domain utama
 
 ### Script
-
-PENJELASAN
 
 Untuk membuat reverse domain kita memerlukan tambahan Zone Baru, tambahkan zone tersebut pada file `/etc/bind/named.conf.local` sesuai dengan ip kita.  Kemudian buatlah sebuah file pada direktori `/etc/bind/wise/` dengan nama file `"3 byte reverse ip kita".in-addr.arpa`. Setelah selesai maka kita harus merestart bind9 dengan command `service bind9 restart`.
 
@@ -388,8 +376,6 @@ Untuk membuat reverse domain kita memerlukan tambahan Zone Baru, tambahkan zone 
 
 Kemudian kita akan mengecek reverse domain dengan melakukan `host -t PTR 192.178.3.2`.
 
-PENJELASAN
-
 > Script dibawah ini terdapat pada **root node SSS & Garden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no4.sh`
 
 - **SSS & Garden**
@@ -411,8 +397,6 @@ PENJELASAN
 > Agar dapat tetap dihubungi jika server WISE bermasalah, buatlah juga Berlint sebagai DNS Slave untuk domain utama
 
 ### Script
-
-PENJELASAN
 
 Setelah selesai maka kita harus merestart bind9 dengan command `service bind9 restart`.
 
@@ -442,8 +426,6 @@ Setelah selesai maka kita harus merestart bind9 dengan command `service bind9 re
 
 Setelah selesai maka kita harus merestart bind9 dengan command `service bind9 restart`.
 
-PENJELASAN
-
 > Script dibawah ini terdapat pada **root node Berlint**, untuk menjalankannya bisa langsung dengan melakukan command `bash no5.sh`
 
 - **Berlint**
@@ -462,8 +444,6 @@ PENJELASAN
 
 Pada server WISE kita akan mematikan service bind9 dengan command `service bind9 stop`
 
-PENJELASAN
-
 > Script dibawah ini terdapat pada **root node SSS & Garden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no5test.sh`
 
 - **WISE**
@@ -476,8 +456,6 @@ PENJELASAN
     ```
 
 Kemudian pada node client (SSS & Garden), kita harus menambahkan nameserver Berlint. Kemudian setelah mematikan server WISE, kita akan mengecek dengan melakukan `ping wise.B11.com -c 3`
-
-PENJELASAN
 
 > Script dibawah ini terdapat pada **root node SSS & Garden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no5.sh`
 
@@ -502,8 +480,6 @@ PENJELASAN
 > Karena banyak informasi dari Handler, buatlah subdomain yang khusus untuk operation yaitu operation.wise.yyy.com dengan alias www.operation.wise.yyy.com yang didelegasikan dari WISE ke Berlint dengan IP menuju ke Eden dalam folder operation 
 
 ### Script
-
-PENJELASAN
 
 Setelah selesai maka kita harus merestart bind9 dengan command `service bind9 restart`.
 
@@ -574,8 +550,6 @@ Setelah selesai maka kita harus merestart bind9 dengan command `service bind9 re
     ```
 
 Setelah selesai maka kita harus merestart bind9 dengan command `service bind9 restart`.
-
-PENJELASAN
 
 > Script dibawah ini terdapat pada **root node Berlint**, untuk menjalankannya bisa langsung dengan melakukan command `bash no6.sh`
 
@@ -664,8 +638,6 @@ PENEJELASAN
 
 ### Script
 
-PENJELASAN
-
 Setelah selesai maka kita harus merestart bind9 dengan command `service bind9 restart`.
 
 > Script dibawah ini terdapat pada **root node Berlint**, untuk menjalankannya bisa langsung dengan melakukan command `bash no7.sh`
@@ -693,8 +665,6 @@ Setelah selesai maka kita harus merestart bind9 dengan command `service bind9 re
     ```
 
 Kemudian kita akan mengecek dengan melakukan test ping `ping strix.operation.wise.B11.com. -c 3` dan test cname `ping www.strix.operation.wise.B11.com. -c 1`.
-
-PENJELASAN
 
 > Script dibawah ini terdapat pada **root node SSS & Garden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no7.sh`
 
