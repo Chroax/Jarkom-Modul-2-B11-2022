@@ -691,7 +691,7 @@ Kemudian kita akan mengecek dengan melakukan test ping `ping strix.operation.wis
 
 ### Script
 
-PENJELASAN
+Setelah selesai maka kita harus merestart bind9 dengan command `service bind9 restart`.
 
 > Script dibawah ini terdapat pada **root node WISE**, untuk menjalankannya bisa langsung dengan melakukan command `bash no8.sh`
 
@@ -722,7 +722,7 @@ PENJELASAN
     service bind9 restart
     ```
 
-PENJELASAN
+Kemudian, edit file `wise.b11.com.conf` lalu tambahkan ServerName dan ServerAlias.
 
 > Script dibawah ini terdapat pada **root node Eden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no8.sh`
 
@@ -747,7 +747,7 @@ PENJELASAN
     service apache2 restart
     ```
 
-PENJELASAN
+Setelah itu, jalankan perintah `lynx wise.B11.com`.
 
 > Script dibawah ini terdapat pada **root node SSS & Garden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no8.sh`
 
@@ -768,7 +768,7 @@ PENJELASAN
 
 ### Script
 
-PENJELASAN
+Lalu, kita menambahkan Directory agar bisa melakukan direct ke `/index.php/home`.
 
 > Script dibawah ini terdapat pada **root node Eden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no9.sh`
 
@@ -795,7 +795,7 @@ PENJELASAN
     service apache2 restart
     ```
 
-PENJELASAN
+Setelah itu, jalankan perintah `lynx wise.B11.com/home`.
 
 > Script dibawah ini terdapat pada **root node SSS & Garden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no9.sh`
 
@@ -816,7 +816,7 @@ PENJELASAN
 
 ### Script
 
-PENJELASAN
+Lakukan konfigurasi pada `/eden.wise.b11.com`. Lalu, lakukan `a2ensite eden.wise.b11.com` dan `service apache2 restart`.
 
 > Script dibawah ini terdapat pada **root node Eden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no10.sh`
 
@@ -869,7 +869,7 @@ PENJELASAN
     service apache2 restart
     ```
 
-PENJELASAN
+Setelah itu, jalankan perintah `lynx http://www.eden.wise.b11.com`.
 
 > Script dibawah ini terdapat pada **root node SSS & Garden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no10.sh`
 
@@ -890,7 +890,7 @@ PENJELASAN
 
 ### Script
 
-PENJELASAN
+Lakukan konfigurasi pada `/eden.wise.b11.com`. Lalu, tambahkan Options +Indexes pada direktori yang ingin di directory list.
 
 > Script dibawah ini terdapat pada **root node Eden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no11.sh`
 
@@ -916,7 +916,7 @@ PENJELASAN
     service apache2 restart
     ```
 
-PENJELASAN
+Setelah itu, jalankan perintah `lynx http://www.eden.wise.b11.com/public`.
 
 > Script dibawah ini terdapat pada **root node SSS & Garden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no11.sh`
 
@@ -937,7 +937,7 @@ PENJELASAN
 
 ### Script
 
-PENJELASAN
+Lakukan konfigurasi pada `/eden.wise.b11.com`. Lalu, tambahkan konfigurasi ErrorDocument agar ketika ada yang error akan diarahkan ke file `/error/404.html`.
 
 > Script dibawah ini terdapat pada **root node Eden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no12.sh`
 
@@ -968,7 +968,7 @@ PENJELASAN
     service apache2 restart
     ```
 
-PENJELASAN
+Setelah itu, jalankan perintah `lynx http://www.eden.wise.b11.com/gataulah`.
 
 > Script dibawah ini terdapat pada **root node SSS & Garden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no12.sh`
 
@@ -989,7 +989,7 @@ PENJELASAN
 
 ### Script
 
-PENJELASAN
+Lakukan konfigurasi pada `/eden.wise.b11.com`. Lalu, tambahkan konfigurasi Alias.
 
 > Script dibawah ini terdapat pada **root node Eden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no13.sh`
 
@@ -1022,7 +1022,7 @@ PENJELASAN
     service apache2 restart
     ```
 
-PENJELASAN
+Setelah itu, jalankan perintah `lynx http://www.eden.wise.b11.com/js`.
 
 > Script dibawah ini terdapat pada **root node SSS & Garden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no13.sh`
 
@@ -1043,7 +1043,7 @@ PENJELASAN
 
 ### Script
 
-PENJELASAN
+Lakukan konfigurasi pada `/strix.operation.wise.b11.com`. Lalu, tambahkan VirtualHost baru yang berada di port 15000 dan 15500.
 
 > Script dibawah ini terdapat pada **root node Eden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no14.sh`
 
@@ -1092,7 +1092,7 @@ PENJELASAN
     service apache2 restart
     ```
 
-PENJELASAN
+Setelah itu, jalankan perintah `lynx www.strix.operation.wise.b11.com:15000`.
 
 > Script dibawah ini terdapat pada **root node SSS**, untuk menjalankannya bisa langsung dengan melakukan command `bash no14.sh`
 
@@ -1102,7 +1102,7 @@ PENJELASAN
     lynx www.strix.operation.wise.b11.com:15000
     ``` 
 
-PENJELASAN
+Setelah itu, jalankan perintah `lynx www.strix.operation.wise.b11.com:15500`.
 
 > Script dibawah ini terdapat pada **root node Garden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no14.sh`
 
@@ -1125,7 +1125,7 @@ PENJELASAN
 
 ### Script
 
-PENJELASAN
+Jalankan command `htpasswd -c -b /etc/apache2/.htpasswd Twilight opStrix`. Lalu, konfigurasi file `/strix.operation.wise.b11.com`.
 
 > Script dibawah ini terdapat pada **root node Eden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no15.sh`
 
@@ -1168,7 +1168,7 @@ PENJELASAN
     service apache2 restart
     ```
 
-PENJELASAN
+Setelah itu, jalankan perintah `lynx www.strix.operation.wise.b11.com:15500`.
 
 > Script dibawah ini terdapat pada **root node SSS & Garden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no15.sh`
 
@@ -1193,7 +1193,7 @@ PENJELASAN
 
 ### Script
 
-PENJELASAN
+Lalukan konfigurasi file `/000-default.conf`. Lalu, lakukan `service apache2 restart`.
 
 > Script dibawah ini terdapat pada **root node Eden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no16.sh`
 
@@ -1213,7 +1213,7 @@ PENJELASAN
     service apache2 restart
     ```
 
-PENJELASAN
+Setelah itu, jalankan perintah `lynx 192.178.2.3`.
 
 > Script dibawah ini terdapat pada **root node SSS & Garden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no16.sh`
 
@@ -1236,7 +1236,7 @@ PENJELASAN
 
 ### Script
 
-PENJELASAN
+Lakukan konfigurasi file `/eden.wise.b11.com/.htaccess`. Lalu, konfigurasi file `/eden.wise.b11.com` dan lakukan restart service apache2 dengan `service apache2 restart`.
 
 > Script dibawah ini terdapat pada **root node Eden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no17.sh`
 
@@ -1279,7 +1279,7 @@ PENJELASAN
     service apache2 restart
     ```
 
-PENJELASAN
+Setelah itu, jalankan perintah `lynx http://www.eden.wise.b11.com/public/images/not-eden.png`.
 
 > Script dibawah ini terdapat pada **root node SSS & Garden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no17.sh`
 
