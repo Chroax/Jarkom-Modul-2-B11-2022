@@ -402,6 +402,7 @@ Setelah selesai maka kita harus merestart bind9 dengan command `service bind9 re
 
 > Script dibawah ini terdapat pada **root node WISE**, untuk menjalankannya bisa langsung dengan melakukan command `bash no5.sh`
 
+Konfigurasi server WISE dengan menuliskan syntax seperti di bawah ini di file /etc/bin/named.conf.local
 - **WISE**
     
     ```
@@ -455,7 +456,7 @@ Pada server WISE kita akan mematikan service bind9 dengan command `service bind9
     echo -e "--------------------------------------------------------------------------------------"
     ```
 
-Kemudian pada node client (SSS & Garden), kita harus menambahkan nameserver Berlint. Kemudian setelah mematikan server WISE, kita akan mengecek dengan melakukan `ping wise.B11.com -c 3`
+Kemudian pada node client (SSS & Garden), kita harus menambahkan nameserver Berlint. Kemudian setelah mematikan server WISE, kita akan mengecek dengan melakukan `ping wise.B11.com -c 3`. Jika ping berhasil maka konfigurasi DNS Slave telah berhasil.
 
 > Script dibawah ini terdapat pada **root node SSS & Garden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no5.sh`
 
@@ -590,6 +591,7 @@ Setelah selesai maka kita harus merestart bind9 dengan command `service bind9 re
     };
     ' > /etc/bind/named.conf.local
 
+    // Buat folder operation
     mkdir /etc/bind/operation
 
     echo -e '
@@ -611,7 +613,7 @@ Setelah selesai maka kita harus merestart bind9 dengan command `service bind9 re
 
 Kemudian kita akan mengecek dengan melakukan test ping `ping operation.wise.B11.com -c 3` dan test cname `host -t CNAME www.operation.wise.B11.com`.
 
-PENEJELASAN
+Pada Berlint masukkan apa yang ada di file /etc/bind/named.conf.options yang sudah meng-comment bagian `dnssec-validation auto` dan tambahkan `allow-query{any;};` dan edit file /etc/bind/named.conf.local ke file `no.6.sh`.
 
 > Script dibawah ini terdapat pada **root node SSS & Garden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no6.sh`
 
