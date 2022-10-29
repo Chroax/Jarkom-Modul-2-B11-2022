@@ -398,6 +398,8 @@ Kemudian kita akan mengecek reverse domain dengan melakukan `host -t PTR 192.178
 
 ### Script
 
+PENJELASAN
+
 Setelah selesai maka kita harus merestart bind9 dengan command `service bind9 restart`.
 
 > Script dibawah ini terdapat pada **root node WISE**, untuk menjalankannya bisa langsung dengan melakukan command `bash no5.sh`
@@ -426,6 +428,8 @@ Setelah selesai maka kita harus merestart bind9 dengan command `service bind9 re
 
 Setelah selesai maka kita harus merestart bind9 dengan command `service bind9 restart`.
 
+PENJELASAN
+
 > Script dibawah ini terdapat pada **root node Berlint**, untuk menjalankannya bisa langsung dengan melakukan command `bash no5.sh`
 
 - **Berlint**
@@ -444,6 +448,8 @@ Setelah selesai maka kita harus merestart bind9 dengan command `service bind9 re
 
 Pada server WISE kita akan mematikan service bind9 dengan command `service bind9 stop`
 
+PENJELASAN
+
 > Script dibawah ini terdapat pada **root node SSS & Garden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no5test.sh`
 
 - **WISE**
@@ -456,6 +462,8 @@ Pada server WISE kita akan mematikan service bind9 dengan command `service bind9
     ```
 
 Kemudian pada node client (SSS & Garden), kita harus menambahkan nameserver Berlint. Kemudian setelah mematikan server WISE, kita akan mengecek dengan melakukan `ping wise.B11.com -c 3`
+
+PENJELASAN
 
 > Script dibawah ini terdapat pada **root node SSS & Garden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no5.sh`
 
@@ -480,6 +488,8 @@ Kemudian pada node client (SSS & Garden), kita harus menambahkan nameserver Berl
 > Karena banyak informasi dari Handler, buatlah subdomain yang khusus untuk operation yaitu operation.wise.yyy.com dengan alias www.operation.wise.yyy.com yang didelegasikan dari WISE ke Berlint dengan IP menuju ke Eden dalam folder operation 
 
 ### Script
+
+PENJELASAN
 
 Setelah selesai maka kita harus merestart bind9 dengan command `service bind9 restart`.
 
@@ -551,6 +561,8 @@ Setelah selesai maka kita harus merestart bind9 dengan command `service bind9 re
 
 Setelah selesai maka kita harus merestart bind9 dengan command `service bind9 restart`.
 
+PENJELASAN
+
 > Script dibawah ini terdapat pada **root node Berlint**, untuk menjalankannya bisa langsung dengan melakukan command `bash no6.sh`
 
 - **Berlint**
@@ -611,6 +623,8 @@ Setelah selesai maka kita harus merestart bind9 dengan command `service bind9 re
 
 Kemudian kita akan mengecek dengan melakukan test ping `ping operation.wise.B11.com -c 3` dan test cname `host -t CNAME www.operation.wise.B11.com`.
 
+PENEJELASAN
+
 > Script dibawah ini terdapat pada **root node SSS & Garden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no6.sh`
 
 - **SSS & Garden**
@@ -635,6 +649,8 @@ Kemudian kita akan mengecek dengan melakukan test ping `ping operation.wise.B11.
 > Untuk informasi yang lebih spesifik mengenai Operation Strix, buatlah subdomain melalui Berlint dengan akses strix.operation.wise.yyy.com dengan alias www.strix.operation.wise.yyy.com yang mengarah ke Eden
 
 ### Script
+
+PENJELASAN
 
 Setelah selesai maka kita harus merestart bind9 dengan command `service bind9 restart`.
 
@@ -663,6 +679,8 @@ Setelah selesai maka kita harus merestart bind9 dengan command `service bind9 re
     ```
 
 Kemudian kita akan mengecek dengan melakukan test ping `ping strix.operation.wise.B11.com. -c 3` dan test cname `ping www.strix.operation.wise.B11.com. -c 1`.
+
+PENJELASAN
 
 > Script dibawah ini terdapat pada **root node SSS & Garden**, untuk menjalankannya bisa langsung dengan melakukan command `bash no7.sh`
 
